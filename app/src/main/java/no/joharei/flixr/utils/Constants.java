@@ -1,0 +1,16 @@
+package no.joharei.flixr.utils;
+
+
+public class Constants {
+    // Your Base URL for the site
+    public static final String BASE_AUTH_URL = "https://www.flickr.com/services/";
+    public static final String BASE_URL = "https://api.flickr.com/services/rest/";
+
+    public static final String REQUEST_URL = BASE_AUTH_URL + "oauth/request_token";
+    public static final String ACCESS_URL = BASE_AUTH_URL + "oauth/access_token";
+    public static final String AUTHORIZE_URL = BASE_AUTH_URL + "oauth/authorize";
+
+    public static final String ENCODING = "UTF-8";
+
+    public static final String OAUTH_CALLBACK_URL = "http://localhost/";
+}
