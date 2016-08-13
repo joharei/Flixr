@@ -20,6 +20,10 @@ import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.Locale;
+
 import no.joharei.flixr.network.models.Photoset;
 
 /*
@@ -71,16 +75,22 @@ public class CardPresenter extends Presenter {
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
         Log.d(TAG, "onBindViewHolder");
-        Log.d(TAG, "Title: " + photoset.getTitle().getContent());
-        Log.d(TAG, "Description: " + photoset.getDescription().getContent());
         cardView.setTitleText(photoset.getTitle().getContent());
         cardView.setContentText(photoset.getDescription().getContent());
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-//        Glide.with(viewHolder.view.getContext())
-//                .load(photoset.getCardImageUrl())
+        String url = String.format(Locale.getDefault(),
+                "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg",
+                photoset.getFarm(),
+                photoset.getServer(),
+                photoset.getPrimary(),
+                photoset.getSecret()
+        );
+        Log.d(TAG, url);
+        Picasso.with(viewHolder.view.getContext())
+                .load(url)
 //                .centerCrop()
-//                .error(mDefaultCardImage)
-//                .into(cardView.getMainImageView());
+                .error(mDefaultCardImage)
+                .into(cardView.getMainImageView());
     }
 
     @Override

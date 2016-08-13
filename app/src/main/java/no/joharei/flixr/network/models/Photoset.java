@@ -4,9 +4,9 @@ package no.joharei.flixr.network.models;
 public class Photoset {
 
     private String id;
-    private String primary;
+    private long primary;
     private String secret;
-    private String server;
+    private int server;
     private int farm;
     private int photos;
     private String videos;
@@ -37,14 +37,14 @@ public class Photoset {
     /**
      * @return The primary
      */
-    public String getPrimary() {
+    public long getPrimary() {
         return primary;
     }
 
     /**
      * @param primary The primary
      */
-    public void setPrimary(String primary) {
+    public void setPrimary(long primary) {
         this.primary = primary;
     }
 
@@ -65,14 +65,14 @@ public class Photoset {
     /**
      * @return The server
      */
-    public String getServer() {
+    public int getServer() {
         return server;
     }
 
     /**
      * @param server The server
      */
-    public void setServer(String server) {
+    public void setServer(int server) {
         this.server = server;
     }
 
