@@ -152,6 +152,8 @@ public class LoginActivity extends Activity {
                         handled = true;
                         String requestToken = extractParamFromUrl(url, "oauth_token");
                         String verifier = extractParamFromUrl(url, "oauth_verifier");
+                        String username = extractParamFromUrl(url, "username");
+                        String userNsid = extractParamFromUrl(url, "user_nsid");
 
                         OAuthGetAccessToken accessToken = getOAuthAccessToken(requestToken);
                         accessToken.verifier = verifier;
@@ -160,7 +162,9 @@ public class LoginActivity extends Activity {
                         signer.tokenSharedSecret = credentials.tokenSecret;
 
                         LocalCredentialStore localStore = new LocalCredentialStore(LoginActivity.this);
-                        localStore.store(new AuthToken(credentials.token, credentials.tokenSecret));
+                        localStore.store(new AuthToken(
+                                credentials.token, credentials.tokenSecret, username, userNsid
+                        ));
 
                     } else if (url.contains("error=")) {
                         new LocalCredentialStore(LoginActivity.this).clear();

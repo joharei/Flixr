@@ -47,14 +47,12 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
-import no.joharei.flixr.network.models.Login;
+import no.joharei.flixr.network.models.PhotosetsContainer;
 import no.joharei.flixr.network.services.FlickrService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,36 +84,32 @@ public class MainFragment extends BrowseFragment {
 
         setupUIElements();
 
-//        loadRows();
         LocalCredentialStore credentialStore = new LocalCredentialStore(getActivity());
         if (credentialStore.noToken()) {
             startActivity(new Intent(getActivity(), LoginActivity.class));
         } else {
             FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, new LocalCredentialStore(getActivity()));
-            Call<Login> loginCall = flickrService.getLogin();
-            loginCall.enqueue(new Callback<Login>() {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity())
-                        .setTitle("Login test")
-                        .setPositiveButton("OK", null);
+            Call<PhotosetsContainer> loginCall = flickrService.getPhotosets();
+            loginCall.enqueue(new Callback<PhotosetsContainer>() {
 
                 @Override
-                public void onResponse(Call<Login> call, Response<Login> response) {
+                public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
                     if (response.isSuccessful()) {
-                        alert.setMessage(String.format(
-                                "Username: %s\nUser id: %s\nStatus: %s",
-                                response.body().getUser().getUsername(),
-                                response.body().getUser().getId(),
-                                response.body().getStat()
-                        ));
+                        loadPhotosets(response.body());
                     } else {
-                        alert.setMessage("Not successful");
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Not successful")
+                                .setPositiveButton("OK", null)
+                                .setMessage(response.message()).show();
                     }
-                    alert.show();
                 }
 
                 @Override
-                public void onFailure(Call<Login> call, Throwable t) {
-                    alert.setMessage(t.getMessage());
+                public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Failure")
+                            .setPositiveButton("OK", null)
+                            .setMessage(t.getMessage()).show();
                 }
             });
         }
@@ -132,26 +126,16 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
-    private void loadRows() {
-        List<Movie> list = MovieList.setupMovies();
-
+    private void loadPhotosets(PhotosetsContainer photosetsContainer) {
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         CardPresenter cardPresenter = new CardPresenter();
 
-        int i;
-        for (i = 0; i < NUM_ROWS; i++) {
-            if (i != 0) {
-                Collections.shuffle(list);
-            }
-            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-            for (int j = 0; j < NUM_COLS; j++) {
-                listRowAdapter.add(list.get(j % 5));
-            }
-            HeaderItem header = new HeaderItem(i, MovieList.MOVIE_CATEGORY[i]);
-            mRowsAdapter.add(new ListRow(header, listRowAdapter));
-        }
+        HeaderItem photosetHeader = new HeaderItem("Photosets");
+        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
+        listRowAdapter.addAll(0, photosetsContainer.getPhotosets().getPhotoset());
+        mRowsAdapter.add(new ListRow(photosetHeader, listRowAdapter));
 
-        HeaderItem gridHeader = new HeaderItem(i, "PREFERENCES");
+        HeaderItem gridHeader = new HeaderItem("Preferences");
 
         GridItemPresenter mGridPresenter = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);

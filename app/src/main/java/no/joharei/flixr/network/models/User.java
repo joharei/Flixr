@@ -1,6 +1,7 @@
 package no.joharei.flixr.network.models;
 
 public class User {
+
     private String id;
     private Username username;
 

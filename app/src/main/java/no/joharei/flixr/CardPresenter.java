@@ -20,7 +20,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
+import no.joharei.flixr.network.models.Photoset;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -67,20 +67,20 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        Movie movie = (Movie) item;
+        Photoset photoset = (Photoset) item;
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
         Log.d(TAG, "onBindViewHolder");
-        if (movie.getCardImageUrl() != null) {
-            cardView.setTitleText(movie.getTitle());
-            cardView.setContentText(movie.getStudio());
-            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-            Glide.with(viewHolder.view.getContext())
-                    .load(movie.getCardImageUrl())
-                    .centerCrop()
-                    .error(mDefaultCardImage)
-                    .into(cardView.getMainImageView());
-        }
+        Log.d(TAG, "Title: " + photoset.getTitle().getContent());
+        Log.d(TAG, "Description: " + photoset.getDescription().getContent());
+        cardView.setTitleText(photoset.getTitle().getContent());
+        cardView.setContentText(photoset.getDescription().getContent());
+        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+//        Glide.with(viewHolder.view.getContext())
+//                .load(photoset.getCardImageUrl())
+//                .centerCrop()
+//                .error(mDefaultCardImage)
+//                .into(cardView.getMainImageView());
     }
 
     @Override
