@@ -16,16 +16,17 @@ package no.joharei.flixr;
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 
+import no.joharei.flixr.network.models.Photoset;
+
 public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPresenter {
 
     @Override
     protected void onBindDescription(ViewHolder viewHolder, Object item) {
-        Movie movie = (Movie) item;
+        Photoset photoset = (Photoset) item;
 
-        if (movie != null) {
-            viewHolder.getTitle().setText(movie.getTitle());
-            viewHolder.getSubtitle().setText(movie.getStudio());
-            viewHolder.getBody().setText(movie.getDescription());
+        if (photoset != null) {
+            viewHolder.getTitle().setText(photoset.getTitle().getContent());
+            viewHolder.getBody().setText(photoset.getDescription().getContent());
         }
     }
 }

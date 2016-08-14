@@ -14,16 +14,17 @@
 
 package no.joharei.flixr;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Locale;
-
+import no.joharei.flixr.network.models.Photo;
 import no.joharei.flixr.network.models.Photoset;
 
 /*
@@ -51,11 +52,12 @@ public class CardPresenter extends Presenter {
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         Log.d(TAG, "onCreateViewHolder");
 
-        sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
-        sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
-        mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie);
+        final Context context = parent.getContext();
+        sDefaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background);
+        sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background);
+        mDefaultCardImage = ContextCompat.getDrawable(context, R.drawable.movie);
 
-        ImageCardView cardView = new ImageCardView(parent.getContext()) {
+        ImageCardView cardView = new ImageCardView(context) {
             @Override
             public void setSelected(boolean selected) {
                 updateCardBackgroundColor(this, selected);
@@ -71,26 +73,27 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        Photoset photoset = (Photoset) item;
+        Log.d(TAG, "onBindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        Log.d(TAG, "onBindViewHolder");
-        cardView.setTitleText(photoset.getTitle().getContent());
-        cardView.setContentText(photoset.getDescription().getContent());
-        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-        String url = String.format(Locale.getDefault(),
-                "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg",
-                photoset.getFarm(),
-                photoset.getServer(),
-                photoset.getPrimary(),
-                photoset.getSecret()
-        );
-        Log.d(TAG, url);
-        Picasso.with(viewHolder.view.getContext())
-                .load(url)
-//                .centerCrop()
-                .error(mDefaultCardImage)
-                .into(cardView.getMainImageView());
+        if (item instanceof Photoset) {
+            Photoset photoset = (Photoset) item;
+            cardView.setTitleText(photoset.getTitle().getContent());
+            cardView.setContentText(photoset.getDescription().getContent());
+            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+            Picasso.with(viewHolder.view.getContext())
+                    .load(photoset.getCardImageUrl())
+                    .error(mDefaultCardImage)
+                    .into(cardView.getMainImageView());
+        } else if (item instanceof Photo) {
+            Photo photo = (Photo) item;
+            cardView.setTitleText(photo.getTitle());
+            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+            Picasso.with(viewHolder.view.getContext())
+                    .load(photo.getCardImageUrl())
+                    .error(mDefaultCardImage)
+                    .into(cardView.getMainImageView());
+        }
     }
 
     @Override

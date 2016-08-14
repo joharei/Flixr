@@ -13,4 +13,9 @@ public class Constants {
     public static final String ENCODING = "UTF-8";
 
     public static final String OAUTH_CALLBACK_URL = "http://localhost/";
+
+    public static final String THUMBNAIL_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg";
+    public static final String FULLSCREEN_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_h.jpg";
+
+    public static final int BACKGROUND_UPDATE_DELAY = 300;
 }

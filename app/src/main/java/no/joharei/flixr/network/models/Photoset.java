@@ -1,9 +1,13 @@
 
 package no.joharei.flixr.network.models;
 
+import java.util.Locale;
+
+import no.joharei.flixr.utils.Constants;
+
 public class Photoset {
 
-    private String id;
+    private long id;
     private long primary;
     private String secret;
     private int server;
@@ -23,14 +27,14 @@ public class Photoset {
     /**
      * @return The id
      */
-    public String getId() {
+    public long getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -244,4 +248,23 @@ public class Photoset {
         this.dateUpdate = dateUpdate;
     }
 
+    public String getCardImageUrl() {
+        return String.format(Locale.getDefault(),
+                Constants.THUMBNAIL_URL_FORMAT,
+                farm,
+                server,
+                primary,
+                secret
+        );
+    }
+
+    public String getBackgroundImageUrl() {
+        return String.format(Locale.getDefault(),
+                Constants.FULLSCREEN_URL_FORMAT,
+                farm,
+                server,
+                primary,
+                secret
+        );
+    }
 }

@@ -20,9 +20,7 @@ import android.os.Bundle;
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-public class DetailsActivity extends Activity {
-    public static final String SHARED_ELEMENT_NAME = "hero";
-    public static final String MOVIE = "Movie";
+public class PhotosetActivity extends Activity {
 
     /**
      * Called when the activity is first created.
@@ -30,7 +28,13 @@ public class DetailsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+//        setContentView(R.layout.activity_photoset);
+
+        if (savedInstanceState == null) {
+            long photosetId = getIntent().getLongExtra(PhotosetFragment.PHOTOSET_ID, -1);
+            PhotosetFragment fragment = PhotosetFragment.newInstance(photosetId);
+            getFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
+        }
     }
 
 }

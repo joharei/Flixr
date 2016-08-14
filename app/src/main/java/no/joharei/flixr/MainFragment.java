@@ -24,7 +24,6 @@ import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
@@ -32,7 +31,6 @@ import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -46,14 +44,18 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
+import no.joharei.flixr.network.models.Login;
+import no.joharei.flixr.network.models.Photoset;
 import no.joharei.flixr.network.models.PhotosetsContainer;
+import no.joharei.flixr.network.models.User;
 import no.joharei.flixr.network.services.FlickrService;
+import no.joharei.flixr.preferences.CommonPreferences;
+import no.joharei.flixr.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,7 +63,6 @@ import retrofit2.Response;
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
 
-    private static final int BACKGROUND_UPDATE_DELAY = 300;
     private static final int GRID_ITEM_WIDTH = 200;
     private static final int GRID_ITEM_HEIGHT = 200;
     private static final int NUM_ROWS = 6;
@@ -72,7 +73,7 @@ public class MainFragment extends BrowseFragment {
     private Drawable mDefaultBackground;
     private DisplayMetrics mMetrics;
     private Timer mBackgroundTimer;
-    private URI mBackgroundURI;
+    private String mBackgroundURL;
     private BackgroundManager mBackgroundManager;
 
     @Override
@@ -88,12 +89,15 @@ public class MainFragment extends BrowseFragment {
         if (credentialStore.noToken()) {
             startActivity(new Intent(getActivity(), LoginActivity.class));
         } else {
-            FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, new LocalCredentialStore(getActivity()));
-            Call<PhotosetsContainer> loginCall = flickrService.getPhotosets();
-            loginCall.enqueue(new Callback<PhotosetsContainer>() {
+            final FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, new LocalCredentialStore(getActivity()));
+
+
+            Call<PhotosetsContainer> photosetsCall = flickrService.getPhotosets();
+            photosetsCall.enqueue(new Callback<PhotosetsContainer>() {
 
                 @Override
                 public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
+                    callForUserDetails(flickrService);
                     if (response.isSuccessful()) {
                         loadPhotosets(response.body());
                     } else {
@@ -106,6 +110,7 @@ public class MainFragment extends BrowseFragment {
 
                 @Override
                 public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
+                    callForUserDetails(flickrService);
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Failure")
                             .setPositiveButton("OK", null)
@@ -115,6 +120,33 @@ public class MainFragment extends BrowseFragment {
         }
 
         setupEventListeners();
+    }
+
+    private void callForUserDetails(FlickrService flickrService) {
+        Call<Login> loginCall = flickrService.getLogin();
+        loginCall.enqueue(new Callback<Login>() {
+            @Override
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body().getUser();
+                    CommonPreferences.setUserNsid(getActivity(), user.getId());
+                    CommonPreferences.setUsername(getActivity(), user.getUsername().getContent());
+                } else {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Not successful")
+                            .setPositiveButton("OK", null)
+                            .setMessage(response.message()).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Login> call, Throwable t) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Failure")
+                        .setPositiveButton("OK", null)
+                        .setMessage(t.getMessage()).show();
+            }
+        });
     }
 
     @Override
@@ -208,7 +240,7 @@ public class MainFragment extends BrowseFragment {
             mBackgroundTimer.cancel();
         }
         mBackgroundTimer = new Timer();
-        mBackgroundTimer.schedule(new UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY);
+        mBackgroundTimer.schedule(new UpdateBackgroundTask(), Constants.BACKGROUND_UPDATE_DELAY);
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
@@ -216,17 +248,18 @@ public class MainFragment extends BrowseFragment {
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
-            if (item instanceof Movie) {
-                Movie movie = (Movie) item;
+            if (item instanceof Photoset) {
+                Photoset photoset = (Photoset) item;
                 Log.d(TAG, "Item: " + item.toString());
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(DetailsActivity.MOVIE, movie);
+                Intent intent = new Intent(getActivity(), PhotosetActivity.class);
+                intent.putExtra(PhotosetFragment.PHOTOSET_ID, photoset.getId());
 
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
+//                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                        getActivity(),
+//                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
+//                        PhotosetActivity.SHARED_ELEMENT_NAME).toBundle();
+//                getActivity().startActivity(intent, bundle);
+                getActivity().startActivity(intent);
             } else if (item instanceof String) {
                 if (((String) item).contains(getString(R.string.error_fragment))) {
                     Intent intent = new Intent(getActivity(), BrowseErrorActivity.class);
@@ -243,8 +276,8 @@ public class MainFragment extends BrowseFragment {
         @Override
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof Movie) {
-                mBackgroundURI = ((Movie) item).getBackgroundImageURI();
+            if (item instanceof Photoset) {
+                mBackgroundURL = ((Photoset) item).getBackgroundImageUrl();
                 startBackgroundTimer();
             }
 
@@ -258,8 +291,9 @@ public class MainFragment extends BrowseFragment {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mBackgroundURI != null) {
-                        updateBackground(mBackgroundURI.toString());
+                    if (mBackgroundURL != null) {
+                        Log.d(TAG, mBackgroundURL);
+                        updateBackground(mBackgroundURL);
                     }
                 }
             });
