@@ -34,6 +34,7 @@
         <activity android:name=".PhotosetActivity" />
         <activity android:name=".BrowseErrorActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".PhotoViewerActivity"></activity>
     </application>
 
 </manifest>
