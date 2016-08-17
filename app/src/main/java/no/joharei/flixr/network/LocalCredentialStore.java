@@ -3,12 +3,13 @@ package no.joharei.flixr.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import static oauth.signpost.OAuth.OAUTH_TOKEN;
+import static oauth.signpost.OAuth.OAUTH_TOKEN_SECRET;
+
 
 public class LocalCredentialStore {
 
     private static final String TOKEN_PREFS = "token_preferences";
-    private static final String OAUTH_TOKEN = "oauth_token";
-    private static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 
     private SharedPreferences prefs;
 
@@ -16,7 +17,7 @@ public class LocalCredentialStore {
         prefs = context.getSharedPreferences(TOKEN_PREFS, Context.MODE_PRIVATE);
     }
 
-    public AuthToken getToken() {
+    AuthToken getToken() {
         return new AuthToken(
                 prefs.getString(OAUTH_TOKEN, ""),
                 prefs.getString(OAUTH_TOKEN_SECRET, "")

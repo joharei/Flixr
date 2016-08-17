@@ -12,7 +12,7 @@ public class Constants {
 
     public static final String ENCODING = "UTF-8";
 
-    public static final String OAUTH_CALLBACK_URL = "http://localhost/";
+    public static final String OAUTH_CALLBACK_URL = "x-oauth://callback/";
 
     public static final String THUMBNAIL_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg";
     public static final String FULLSCREEN_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_h.jpg";

@@ -1,15 +1,14 @@
 package no.joharei.flixr.network;
 
 
-import com.google.api.client.auth.oauth.OAuthHmacSigner;
-import com.google.api.client.auth.oauth.OAuthParameters;
-
 import no.joharei.flixr.utils.ApiKeys;
 import no.joharei.flixr.utils.Constants;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
+import se.akerfeldt.okhttp.signpost.SigningInterceptor;
 
 public class ServiceGenerator {
 
@@ -23,14 +22,10 @@ public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass, LocalCredentialStore localCredentialStore) {
         httpClient.addInterceptor(new FlickrInterceptor());
         if (localCredentialStore != null) {
-            OAuthHmacSigner signer = new OAuthHmacSigner();
-            signer.clientSharedSecret = ApiKeys.CONSUMER_SECRET;
-            signer.tokenSharedSecret = localCredentialStore.getToken().getAuthTokenSecret();
-            OAuthParameters authorizer = new OAuthParameters();
-            authorizer.consumerKey = ApiKeys.CONSUMER_KEY;
-            authorizer.signer = signer;
-            authorizer.token = localCredentialStore.getToken().getAuthToken();
-            httpClient.addInterceptor(new OAuthInterceptor(authorizer));
+            OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET);
+            AuthToken authToken = localCredentialStore.getToken();
+            consumer.setTokenWithSecret(authToken.getAuthToken(), authToken.getAuthTokenSecret());
+            httpClient.addInterceptor(new SigningInterceptor(consumer));
         }
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

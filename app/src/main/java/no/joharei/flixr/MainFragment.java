@@ -50,12 +50,9 @@ import java.util.TimerTask;
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
 import no.joharei.flixr.network.models.ContactsContainer;
-import no.joharei.flixr.network.models.Login;
 import no.joharei.flixr.network.models.Photoset;
 import no.joharei.flixr.network.models.PhotosetsContainer;
-import no.joharei.flixr.network.models.User;
 import no.joharei.flixr.network.services.FlickrService;
-import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -101,7 +98,6 @@ public class MainFragment extends BrowseFragment {
 
                 @Override
                 public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
-                    callForUserDetails(flickrService);
                     if (response.isSuccessful()) {
                         loadPhotosets(response.body());
                     } else {
@@ -114,7 +110,6 @@ public class MainFragment extends BrowseFragment {
 
                 @Override
                 public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
-                    callForUserDetails(flickrService);
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Failure")
                             .setPositiveButton("OK", null)
@@ -139,33 +134,6 @@ public class MainFragment extends BrowseFragment {
         }
 
         setupEventListeners();
-    }
-
-    private void callForUserDetails(FlickrService flickrService) {
-        Call<Login> loginCall = flickrService.getLogin();
-        loginCall.enqueue(new Callback<Login>() {
-            @Override
-            public void onResponse(Call<Login> call, Response<Login> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body().getUser();
-                    CommonPreferences.setUserNsid(getActivity(), user.getId());
-                    CommonPreferences.setUsername(getActivity(), user.getUsername().getContent());
-                } else {
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Not successful")
-                            .setPositiveButton("OK", null)
-                            .setMessage(response.message()).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Login> call, Throwable t) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Failure")
-                        .setPositiveButton("OK", null)
-                        .setMessage(t.getMessage()).show();
-            }
-        });
     }
 
     @Override

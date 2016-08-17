@@ -1,5 +1,6 @@
 package no.joharei.flixr;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,28 +13,34 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.google.api.client.auth.oauth.OAuthAuthorizeTemporaryTokenUrl;
-import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
-import com.google.api.client.auth.oauth.OAuthGetAccessToken;
-import com.google.api.client.auth.oauth.OAuthGetTemporaryToken;
-import com.google.api.client.auth.oauth.OAuthHmacSigner;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-
-import java.io.IOException;
-
 import no.joharei.flixr.network.AuthToken;
 import no.joharei.flixr.network.LocalCredentialStore;
+import no.joharei.flixr.network.ServiceGenerator;
+import no.joharei.flixr.network.models.Login;
+import no.joharei.flixr.network.models.User;
+import no.joharei.flixr.network.services.FlickrService;
+import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.utils.ApiKeys;
 import no.joharei.flixr.utils.Constants;
+import oauth.signpost.OAuth;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer;
+import se.akerfeldt.okhttp.signpost.OkHttpOAuthProvider;
 
 
 public class LoginActivity extends Activity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private boolean handled;
+    private OkHttpOAuthConsumer consumer;
+    private OkHttpOAuthProvider provider;
     private WebView webView;
     private ProgressBar progress;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,166 +53,153 @@ public class LoginActivity extends Activity {
         progress = (ProgressBar) findViewById(R.id.progressBar);
         progress.setVisibility(View.GONE);
         progress.setIndeterminate(true);
-        progress.setProgress(0);
+
+        try {
+            consumer = new OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET);
+            provider = new OkHttpOAuthProvider(Constants.REQUEST_URL, Constants.ACCESS_URL, Constants.AUTHORIZE_URL);
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating consumer/provider", e);
+        }
+        Log.d(TAG, "Starting task to retrieve request token");
+        new OAuthRequestTokenTask(consumer, provider).execute();
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progress.setVisibility(View.VISIBLE);
+                super.onPageStarted(view, url, favicon);
+            }
+
+            @Override
+            public void onPageFinished(final WebView view, final String url) {
+
+                if (url.startsWith(Constants.OAUTH_CALLBACK_URL)) {
+                    if (url.contains("oauth_token=")) {
+                        webView.setVisibility(View.INVISIBLE);
+                        new RetrieveAccessTokenTask(consumer, provider).execute(Uri.parse(url));
+                    } else {
+                        webView.setVisibility(View.VISIBLE);
+                    }
+                }
+                progress.setVisibility(View.GONE);
+            }
+
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        handled = false;
-        new PreProcessToken().execute();
+    /**
+     * An asynchronous task that communicates with Twitter to
+     * retrieve a request token.
+     * (OAuthGetRequestToken)
+     * <p>
+     * After receiving the request token from Twitter,
+     * pop a browser to the user to authorize the Request Token.
+     * (OAuthAuthorizeToken)
+     */
+    private class OAuthRequestTokenTask extends AsyncTask<Void, Void, String> {
 
-    }
+        final String TAG = getClass().getName();
+        private OAuthProvider provider;
+        private OAuthConsumer consumer;
 
-    private class PreProcessToken extends AsyncTask<Uri, Void, Void> {
+        /**
+         * We pass the OAuth consumer and provider.
+         *
+         * @param provider The OAuthProvider object
+         * @param consumer The OAuthConsumer object
+         */
+        private OAuthRequestTokenTask(OAuthConsumer consumer, OAuthProvider provider) {
+            this.consumer = consumer;
+            this.provider = provider;
+        }
 
-        final OAuthHmacSigner signer = new OAuthHmacSigner();
-        private String authorizationUrl;
-
+        /**
+         * Retrieve the OAuth Request Token and present a browser to the user to authorize the token.
+         */
         @Override
-        protected Void doInBackground(Uri... params) {
+        protected String doInBackground(Void... params) {
 
             try {
-
-                signer.clientSharedSecret = ApiKeys.CONSUMER_SECRET;
-
-                OAuthGetTemporaryToken temporaryToken = new OAuthGetTemporaryToken(Constants.REQUEST_URL);
-                temporaryToken.transport = new ApacheHttpTransport();
-                temporaryToken.signer = signer;
-                temporaryToken.consumerKey = ApiKeys.CONSUMER_KEY;
-                temporaryToken.callback = Constants.OAUTH_CALLBACK_URL;
-
-                OAuthCredentialsResponse tempCredentials = temporaryToken.execute();
-                signer.tokenSharedSecret = tempCredentials.tokenSecret;
-
-                OAuthAuthorizeTemporaryTokenUrl authorizeUrl = new OAuthAuthorizeTemporaryTokenUrl(Constants.AUTHORIZE_URL);
-                authorizeUrl.temporaryToken = tempCredentials.token;
-                authorizationUrl = authorizeUrl.build();
-
-                handled = false;
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.i(TAG, "Retrieving request token from Google servers");
+                return provider.retrieveRequestToken(consumer, Constants.OAUTH_CALLBACK_URL);
+            } catch (Exception e) {
+                Log.e(TAG, "Error during OAUth retrieve request token", e);
             }
-
             return null;
         }
 
-
-        /**
-         * When we're done and we've retrieved either a valid token or an error from the server,
-         * we'll return to our original activity
-         */
         @Override
-        protected void onPostExecute(Void result) {
-
-            webView.setWebViewClient(new WebViewClient() {
-
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    progress.setVisibility(View.VISIBLE);
-                    super.onPageStarted(view, url, favicon);
-                }
-
-                @Override
-                public void onPageFinished(final WebView view, final String url) {
-
-                    if (url.startsWith(Constants.OAUTH_CALLBACK_URL)) {
-                        if (url.contains("oauth_token=")) {
-                            webView.setVisibility(View.INVISIBLE);
-
-                            if (!handled) {
-                                new ProcessToken(url, signer).execute();
-                            }
-                        } else {
-                            webView.setVisibility(View.VISIBLE);
-                        }
-                    }
-                    progress.setProgress(100);
-                    progress.setVisibility(View.GONE);
-                }
-
-            });
-
-            webView.loadUrl(authorizationUrl);
-
+        protected void onPostExecute(String url) {
+            Log.i(TAG, "Popping a browser with the authorize URL : " + url);
+            webView.loadUrl(url);
         }
-
     }
 
-    private class ProcessToken extends AsyncTask<Uri, Void, Void> {
+    private class RetrieveAccessTokenTask extends AsyncTask<Uri, Void, Void> {
 
-        String url;
-        private OAuthHmacSigner signer;
+        private OAuthProvider provider;
+        private OAuthConsumer consumer;
 
-        public ProcessToken(String url, OAuthHmacSigner signer) {
-            this.url = url;
-            this.signer = signer;
+        private RetrieveAccessTokenTask(OAuthConsumer consumer, OAuthProvider provider) {
+            this.consumer = consumer;
+            this.provider = provider;
         }
 
+        /**
+         * Retrieve the oauth_verifier, and store the oauth and oauth_token_secret
+         * for future API calls.
+         */
         @Override
         protected Void doInBackground(Uri... params) {
+            final Uri uri = params[0];
+            final String oauth_verifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER);
 
-            Log.i(TAG, "doInbackground called with url " + url);
-            if (url.startsWith(Constants.OAUTH_CALLBACK_URL) && !handled) {
-                try {
-                    if (url.contains("oauth_token=")) {
-                        handled = true;
-                        String requestToken = extractParamFromUrl(url, "oauth_token");
-                        String verifier = extractParamFromUrl(url, "oauth_verifier");
+            try {
+                provider.retrieveAccessToken(consumer, oauth_verifier);
 
-                        OAuthGetAccessToken accessToken = getOAuthAccessToken(requestToken);
-                        accessToken.verifier = verifier;
+                LocalCredentialStore credentialStore = new LocalCredentialStore(LoginActivity.this);
+                AuthToken authToken = new AuthToken(consumer.getToken(), consumer.getTokenSecret());
+                credentialStore.store(authToken);
 
-                        OAuthCredentialsResponse credentials = accessToken.execute();
-                        signer.tokenSharedSecret = credentials.tokenSecret;
+                String token = authToken.getAuthToken();
+                String secret = authToken.getAuthTokenSecret();
 
-                        LocalCredentialStore localStore = new LocalCredentialStore(LoginActivity.this);
-                        localStore.store(new AuthToken(credentials.token, credentials.tokenSecret));
+                consumer.setTokenWithSecret(token, secret);
 
-                    } else if (url.contains("error=")) {
-                        new LocalCredentialStore(LoginActivity.this).clear();
-                    }
+                FlickrService flickrService = ServiceGenerator.createService(FlickrService.class,
+                        new LocalCredentialStore(LoginActivity.this));
+                callForUserDetails(flickrService);
 
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                }
+                Log.i(TAG, "OAuth - Access Token Retrieved");
 
+            } catch (Exception e) {
+                Log.e(TAG, "OAuth - Access Token Retrieval Error", e);
             }
+
             return null;
         }
 
-        public OAuthGetAccessToken getOAuthAccessToken(String requestToken) {
-            signer.clientSharedSecret = ApiKeys.CONSUMER_SECRET;
-            OAuthGetAccessToken accessToken = new OAuthGetAccessToken(Constants.ACCESS_URL);
-            accessToken.transport = new ApacheHttpTransport();
-            accessToken.temporaryToken = requestToken;
-            accessToken.signer = signer;
-            accessToken.consumerKey = ApiKeys.CONSUMER_KEY;
-            return accessToken;
+        private void callForUserDetails(FlickrService flickrService) {
+            Call<Login> loginCall = flickrService.getLogin();
+            loginCall.enqueue(new Callback<Login>() {
+                @Override
+                public void onResponse(Call<Login> call, Response<Login> response) {
+                    if (response.isSuccessful()) {
+                        User user = response.body().getUser();
+                        CommonPreferences.setUserNsid(LoginActivity.this, user.getId());
+                        CommonPreferences.setUsername(LoginActivity.this, user.getUsername().getContent());
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
+                    } else {
+                        Log.d(TAG, "OAuth - Login not successful");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Login> call, Throwable t) {
+                    Log.e(TAG, "OAuth - Error logging in", t);
+                }
+            });
         }
-
-        private String extractParamFromUrl(String url, String paramName) {
-
-            Uri uri = Uri.parse(url);
-
-            return uri.getQueryParameter(paramName);
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-        }
-
-        /**
-         * When we're done and we've retrieved either a valid token or an error from the server,
-         * we'll return to our original activity
-         */
-        @Override
-        protected void onPostExecute(Void result) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        }
-
     }
-
 }
