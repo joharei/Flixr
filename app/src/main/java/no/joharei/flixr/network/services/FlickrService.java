@@ -1,6 +1,7 @@
 package no.joharei.flixr.network.services;
 
 
+import no.joharei.flixr.network.models.ContactsContainer;
 import no.joharei.flixr.network.models.Login;
 import no.joharei.flixr.network.models.PhotosPhotosetContainer;
 import no.joharei.flixr.network.models.PhotosetsContainer;
@@ -20,4 +21,7 @@ public interface FlickrService {
             @Query("photoset_id") long photosetId,
             @Query("user_id") String userId
     );
+
+    @GET("?method=flickr.contacts.getList")
+    Call<ContactsContainer> getContacts();
 }

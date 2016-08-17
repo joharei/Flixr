@@ -49,6 +49,7 @@ import java.util.TimerTask;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
+import no.joharei.flixr.network.models.ContactsContainer;
 import no.joharei.flixr.network.models.Login;
 import no.joharei.flixr.network.models.Photoset;
 import no.joharei.flixr.network.models.PhotosetsContainer;
@@ -85,6 +86,9 @@ public class MainFragment extends BrowseFragment {
 
         setupUIElements();
 
+        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+        setAdapter(mRowsAdapter);
+
         LocalCredentialStore credentialStore = new LocalCredentialStore(getActivity());
         if (credentialStore.noToken()) {
             startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -115,6 +119,21 @@ public class MainFragment extends BrowseFragment {
                             .setTitle("Failure")
                             .setPositiveButton("OK", null)
                             .setMessage(t.getMessage()).show();
+                }
+            });
+
+            Call<ContactsContainer> contactsCall = flickrService.getContacts();
+            contactsCall.enqueue(new Callback<ContactsContainer>() {
+                @Override
+                public void onResponse(Call<ContactsContainer> call, Response<ContactsContainer> response) {
+                    if (response.isSuccessful()) {
+                        loadContacts(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ContactsContainer> call, Throwable t) {
+
                 }
             });
         }
@@ -159,25 +178,21 @@ public class MainFragment extends BrowseFragment {
     }
 
     private void loadPhotosets(PhotosetsContainer photosetsContainer) {
-        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         CardPresenter cardPresenter = new CardPresenter();
 
         HeaderItem photosetHeader = new HeaderItem("Photosets");
-        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-        listRowAdapter.addAll(0, photosetsContainer.getPhotosets().getPhotoset());
-        mRowsAdapter.add(new ListRow(photosetHeader, listRowAdapter));
+        ArrayObjectAdapter photosetAdapter = new ArrayObjectAdapter(cardPresenter);
+        photosetAdapter.addAll(0, photosetsContainer.getPhotosets().getPhotoset());
+        mRowsAdapter.add(new ListRow(photosetHeader, photosetAdapter));
+    }
 
-        HeaderItem gridHeader = new HeaderItem("Preferences");
+    private void loadContacts(ContactsContainer contactsContainer) {
+        CardPresenter cardPresenter = new CardPresenter();
 
-        GridItemPresenter mGridPresenter = new GridItemPresenter();
-        ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
-        gridRowAdapter.add(getResources().getString(R.string.grid_view));
-        gridRowAdapter.add(getString(R.string.error_fragment));
-        gridRowAdapter.add(getResources().getString(R.string.personal_settings));
-        mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
-
-        setAdapter(mRowsAdapter);
-
+        HeaderItem followingHeader = new HeaderItem("Following");
+        ArrayObjectAdapter followingAdapter = new ArrayObjectAdapter(cardPresenter);
+        followingAdapter.addAll(0, contactsContainer.getContacts().getContact());
+        mRowsAdapter.add(new ListRow(followingHeader, followingAdapter));
     }
 
     private void prepareBackgroundManager() {

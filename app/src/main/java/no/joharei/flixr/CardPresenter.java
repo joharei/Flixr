@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
+import no.joharei.flixr.network.models.Contact;
 import no.joharei.flixr.network.models.Photo;
 import no.joharei.flixr.network.models.Photoset;
 
@@ -76,21 +77,28 @@ public class CardPresenter extends Presenter {
         Log.d(TAG, "onBindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
+        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+        Context context = viewHolder.view.getContext();
         if (item instanceof Photoset) {
             Photoset photoset = (Photoset) item;
             cardView.setTitleText(photoset.getTitle().getContent());
             cardView.setContentText(photoset.getDescription().getContent());
-            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-            Picasso.with(viewHolder.view.getContext())
+            Picasso.with(context)
                     .load(photoset.getCardImageUrl())
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());
         } else if (item instanceof Photo) {
             Photo photo = (Photo) item;
             cardView.setTitleText(photo.getTitle());
-            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-            Picasso.with(viewHolder.view.getContext())
+            Picasso.with(context)
                     .load(photo.getCardImageUrl())
+                    .error(mDefaultCardImage)
+                    .into(cardView.getMainImageView());
+        } else if (item instanceof Contact) {
+            Contact contact = (Contact) item;
+            cardView.setTitleText(contact.getRealname());
+            Picasso.with(context)
+                    .load(contact.getCardImageUrl())
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());
         }
