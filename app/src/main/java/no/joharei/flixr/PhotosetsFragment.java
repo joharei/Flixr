@@ -16,30 +16,28 @@ import java.util.ArrayList;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
-import no.joharei.flixr.network.models.Photo;
 import no.joharei.flixr.network.models.PhotosPhotosetContainer;
+import no.joharei.flixr.network.models.Photoset;
+import no.joharei.flixr.network.models.PhotosetsContainer;
 import no.joharei.flixr.network.services.FlickrService;
 import no.joharei.flixr.preferences.CommonPreferences;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PhotosetFragment extends VerticalGridFragment {
+public class PhotosetsFragment extends VerticalGridFragment {
 
-    public static final String PHOTOSET_ID = "photosetId";
     public static final String USER_ID = "userId";
-    private static final String TAG = PhotosetFragment.class.getSimpleName();
+    private static final String TAG = PhotosetsFragment.class.getSimpleName();
     private static final int NUM_COLUMNS = 4;
     private ArrayObjectAdapter mAdapter;
-    private long photosetId;
-    private ArrayList<Photo> photos;
     private String userId;
+    private ArrayList<Photoset> photosets;
 
-    public static PhotosetFragment newInstance(long photosetId, String userId) {
-        PhotosetFragment fragment = new PhotosetFragment();
+    public static PhotosetsFragment newInstance(String userId) {
+        PhotosetsFragment fragment = new PhotosetsFragment();
 
         Bundle args = new Bundle();
-        args.putLong(PHOTOSET_ID, photosetId);
         args.putString(USER_ID, userId);
         fragment.setArguments(args);
 
@@ -48,8 +46,6 @@ public class PhotosetFragment extends VerticalGridFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-
         super.onCreate(savedInstanceState);
 
         VerticalGridPresenter gridPresenter = new VerticalGridPresenter();
@@ -61,39 +57,37 @@ public class PhotosetFragment extends VerticalGridFragment {
         setOnItemViewClickedListener(new OnItemViewClickedListener() {
             @Override
             public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if (item instanceof Photo && photos != null) {
-                    Intent intent = new Intent(getActivity(), PhotoViewerActivity.class);
-                    intent.putParcelableArrayListExtra(PhotoViewerActivity.PHOTOS_NAME, photos);
-                    intent.putExtra(PhotoViewerActivity.PHOTO_POSITION, photos.indexOf(item));
-                    startActivity(intent);
+                if (item instanceof Photoset && photosets != null) {
+                    Photoset photoset = (Photoset) item;
+                    Intent intent = new Intent(getActivity(), PhotosetActivity.class);
+                    intent.putExtra(PhotosetFragment.PHOTOSET_ID, photoset.getId());
+                    intent.putExtra(PhotosetFragment.USER_ID, userId);
+                    getActivity().startActivity(intent);
                 }
             }
         });
 
-        Bundle arguments = getArguments();
-        photosetId = arguments.getLong(PHOTOSET_ID);
-        userId = arguments.getString(USER_ID);
-        loadPhotos();
+        userId = getArguments().getString(USER_ID);
+        loadPhotosets();
     }
 
-    private void loadPhotos() {
+    private void loadPhotosets() {
         LocalCredentialStore localCredentialStore = new LocalCredentialStore(getActivity());
         FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, localCredentialStore);
-        String user = userId != null ? userId : CommonPreferences.getUserNsid(getActivity());
-        Call<PhotosPhotosetContainer> photosetCall = flickrService.getPhotos(photosetId, user);
-        photosetCall.enqueue(new Callback<PhotosPhotosetContainer>() {
+        Call<PhotosetsContainer> photosetsCall = flickrService.getPhotosets(userId);
+        photosetsCall.enqueue(new Callback<PhotosetsContainer>() {
             @Override
-            public void onResponse(Call<PhotosPhotosetContainer> call, Response<PhotosPhotosetContainer> response) {
+            public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
                 if (response.isSuccessful()) {
-                    photos = new ArrayList<>();
-                    photos.addAll(response.body().getPhotoset().getPhoto());
-                    mAdapter.addAll(0, photos);
+                    photosets = new ArrayList<>();
+                    photosets.addAll(response.body().getPhotosets().getPhotoset());
+                    mAdapter.addAll(0, photosets);
                 }
             }
 
             @Override
-            public void onFailure(Call<PhotosPhotosetContainer> call, Throwable t) {
-
+            public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
+                Log.e(TAG, "Failure getting photosets", t);
             }
         });
     }

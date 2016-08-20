@@ -49,6 +49,7 @@ import java.util.TimerTask;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
+import no.joharei.flixr.network.models.Contact;
 import no.joharei.flixr.network.models.ContactsContainer;
 import no.joharei.flixr.network.models.Photoset;
 import no.joharei.flixr.network.models.PhotosetsContainer;
@@ -92,45 +93,9 @@ public class MainFragment extends BrowseFragment {
         } else {
             final FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, new LocalCredentialStore(getActivity()));
 
+            loadPhotosets(flickrService);
 
-            Call<PhotosetsContainer> photosetsCall = flickrService.getPhotosets();
-            photosetsCall.enqueue(new Callback<PhotosetsContainer>() {
-
-                @Override
-                public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
-                    if (response.isSuccessful()) {
-                        loadPhotosets(response.body());
-                    } else {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Not successful")
-                                .setPositiveButton("OK", null)
-                                .setMessage(response.message()).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Failure")
-                            .setPositiveButton("OK", null)
-                            .setMessage(t.getMessage()).show();
-                }
-            });
-
-            Call<ContactsContainer> contactsCall = flickrService.getContacts();
-            contactsCall.enqueue(new Callback<ContactsContainer>() {
-                @Override
-                public void onResponse(Call<ContactsContainer> call, Response<ContactsContainer> response) {
-                    if (response.isSuccessful()) {
-                        loadContacts(response.body());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ContactsContainer> call, Throwable t) {
-
-                }
-            });
+            loadContacts(flickrService);
         }
 
         setupEventListeners();
@@ -145,22 +110,50 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
-    private void loadPhotosets(PhotosetsContainer photosetsContainer) {
+    private void loadPhotosets(FlickrService flickrService) {
         CardPresenter cardPresenter = new CardPresenter();
 
         HeaderItem photosetHeader = new HeaderItem("Photosets");
-        ArrayObjectAdapter photosetAdapter = new ArrayObjectAdapter(cardPresenter);
-        photosetAdapter.addAll(0, photosetsContainer.getPhotosets().getPhotoset());
+        final ArrayObjectAdapter photosetAdapter = new ArrayObjectAdapter(cardPresenter);
         mRowsAdapter.add(new ListRow(photosetHeader, photosetAdapter));
+        Call<PhotosetsContainer> photosetsCall = flickrService.getPhotosets(null);
+        photosetsCall.enqueue(new Callback<PhotosetsContainer>() {
+            @Override
+            public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
+                if (response.isSuccessful()) {
+                    photosetAdapter.addAll(0, response.body().getPhotosets().getPhotoset());
+                } else {
+                    Log.d(TAG, "Response was unsuccessful: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
+                Log.e(TAG, "Failure getting photosets", t);
+            }
+        });
     }
 
-    private void loadContacts(ContactsContainer contactsContainer) {
+    private void loadContacts(FlickrService flickrService) {
         CardPresenter cardPresenter = new CardPresenter();
 
         HeaderItem followingHeader = new HeaderItem("Following");
-        ArrayObjectAdapter followingAdapter = new ArrayObjectAdapter(cardPresenter);
-        followingAdapter.addAll(0, contactsContainer.getContacts().getContact());
+        final ArrayObjectAdapter followingAdapter = new ArrayObjectAdapter(cardPresenter);
         mRowsAdapter.add(new ListRow(followingHeader, followingAdapter));
+        Call<ContactsContainer> contactsCall = flickrService.getContacts();
+        contactsCall.enqueue(new Callback<ContactsContainer>() {
+            @Override
+            public void onResponse(Call<ContactsContainer> call, Response<ContactsContainer> response) {
+                if (response.isSuccessful()) {
+                    followingAdapter.addAll(0, response.body().getContacts().getContact());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ContactsContainer> call, Throwable t) {
+
+            }
+        });
     }
 
     private void prepareBackgroundManager() {
@@ -242,6 +235,11 @@ public class MainFragment extends BrowseFragment {
 //                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
 //                        PhotosetActivity.SHARED_ELEMENT_NAME).toBundle();
 //                getActivity().startActivity(intent, bundle);
+                getActivity().startActivity(intent);
+            } else if (item instanceof Contact) {
+                Contact contact = (Contact) item;
+                Intent intent = new Intent(getActivity(), PhotosetActivity.class);
+                intent.putExtra(PhotosetsFragment.USER_ID, contact.getNsid());
                 getActivity().startActivity(intent);
             } else if (item instanceof String) {
                 if (((String) item).contains(getString(R.string.error_fragment))) {

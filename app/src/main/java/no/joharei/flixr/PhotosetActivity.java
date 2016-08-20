@@ -15,6 +15,8 @@
 package no.joharei.flixr;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 
 /*
@@ -28,12 +30,21 @@ public class PhotosetActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_photoset);
 
         if (savedInstanceState == null) {
-            long photosetId = getIntent().getLongExtra(PhotosetFragment.PHOTOSET_ID, -1);
-            PhotosetFragment fragment = PhotosetFragment.newInstance(photosetId);
-            getFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
+            Fragment fragment = null;
+            Intent intent = getIntent();
+            if (intent.hasExtra(PhotosetFragment.PHOTOSET_ID)) {
+                long photosetId = intent.getLongExtra(PhotosetFragment.PHOTOSET_ID, -1);
+                String userId = intent.getStringExtra(PhotosetFragment.USER_ID);
+                fragment = PhotosetFragment.newInstance(photosetId, userId);
+            } else if (intent.hasExtra(PhotosetsFragment.USER_ID)) {
+                String userId = intent.getStringExtra(PhotosetsFragment.USER_ID);
+                fragment = PhotosetsFragment.newInstance(userId);
+            }
+            if (fragment != null) {
+                getFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
+            }
         }
     }
 
