@@ -45,6 +45,7 @@ public class PhotoViewAdapter extends PagerAdapter {
         Photo photo = photos.get(position);
         ImageView imageView = (ImageView) itemLayout.findViewById(R.id.image);
         TextView textView = (TextView) itemLayout.findViewById(R.id.title);
+        textView.setTag("imageTitle" + position);
         textView.setText(photo.getTitle());
         Log.d("PhotoViewAdapter", "Getting image: " + photo.getFullscreenImageUrl());
         Picasso.with(context)
