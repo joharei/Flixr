@@ -15,7 +15,7 @@
 package no.joharei.flixr;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,18 +30,14 @@ import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,6 +49,7 @@ import no.joharei.flixr.network.models.ContactsContainer;
 import no.joharei.flixr.network.models.Photoset;
 import no.joharei.flixr.network.models.PhotosetsContainer;
 import no.joharei.flixr.network.services.FlickrService;
+import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,9 +58,6 @@ import retrofit2.Response;
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
 
-    private static final int GRID_ITEM_WIDTH = 200;
-    private static final int GRID_ITEM_HEIGHT = 200;
-
     private final Handler mHandler = new Handler();
     private ArrayObjectAdapter mRowsAdapter;
     private Drawable mDefaultBackground;
@@ -71,6 +65,7 @@ public class MainFragment extends BrowseFragment {
     private Timer mBackgroundTimer;
     private String mBackgroundURL;
     private BackgroundManager mBackgroundManager;
+    private Target mBackgroundTarget;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -156,20 +151,34 @@ public class MainFragment extends BrowseFragment {
 
         mBackgroundManager = BackgroundManager.getInstance(getActivity());
         mBackgroundManager.attach(getActivity().getWindow());
-        mDefaultBackground = getResources().getDrawable(R.drawable.default_background);
+        mDefaultBackground = ContextCompat.getDrawable(getActivity(), R.drawable.default_background);
+        mBackgroundTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                mBackgroundManager.setBitmap(bitmap);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        };
         mMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
     }
 
     private void setupUIElements() {
-        setTitle(getString(R.string.browse_title));
+        setTitle(getString(R.string.hi_title, CommonPreferences.getUsername(getActivity())));
         setHeadersState(HEADERS_ENABLED);
         setHeadersTransitionOnBackEnabled(true);
 
         // set fastLane (or headers) background color
-        setBrandColor(getResources().getColor(R.color.fastlane_background));
+        setBrandColor(ContextCompat.getColor(getActivity(), R.color.fastlane_background));
         // set search icon color
-        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+        setSearchAffordanceColor(ContextCompat.getColor(getActivity(), R.color.search_opaque));
     }
 
     private void setupEventListeners() {
@@ -189,18 +198,12 @@ public class MainFragment extends BrowseFragment {
     protected void updateBackground(String uri) {
         int width = mMetrics.widthPixels;
         int height = mMetrics.heightPixels;
-        Glide.with(getActivity())
+        Picasso.with(getActivity())
                 .load(uri)
                 .centerCrop()
+                .resize(width, height)
                 .error(mDefaultBackground)
-                .into(new SimpleTarget<GlideDrawable>(width, height) {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource,
-                                                GlideAnimation<? super GlideDrawable>
-                                                        glideAnimation) {
-                        mBackgroundManager.setDrawable(resource);
-                    }
-                });
+                .into(mBackgroundTarget);
         mBackgroundTimer.cancel();
     }
 
@@ -274,28 +277,4 @@ public class MainFragment extends BrowseFragment {
 
         }
     }
-
-    private class GridItemPresenter extends Presenter {
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent) {
-            TextView view = new TextView(parent.getContext());
-            view.setLayoutParams(new ViewGroup.LayoutParams(GRID_ITEM_WIDTH, GRID_ITEM_HEIGHT));
-            view.setFocusable(true);
-            view.setFocusableInTouchMode(true);
-            view.setBackgroundColor(getResources().getColor(R.color.default_background));
-            view.setTextColor(Color.WHITE);
-            view.setGravity(Gravity.CENTER);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-            ((TextView) viewHolder.view).setText((String) item);
-        }
-
-        @Override
-        public void onUnbindViewHolder(ViewHolder viewHolder) {
-        }
-    }
-
 }
