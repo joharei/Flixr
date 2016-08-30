@@ -96,7 +96,9 @@ public class CardPresenter extends Presenter {
                     .into(cardView.getMainImageView());
         } else if (item instanceof Contact) {
             Contact contact = (Contact) item;
-            cardView.setTitleText(contact.getRealname());
+            cardView.setTitleText(!(contact.getRealname() == null || contact.getRealname().isEmpty()) ?
+                    contact.getRealname() :
+                    contact.getUsername());
             Picasso.with(context)
                     .load(contact.getCardImageUrl())
                     .error(mDefaultCardImage)

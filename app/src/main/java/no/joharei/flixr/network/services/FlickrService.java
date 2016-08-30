@@ -14,7 +14,9 @@ public interface FlickrService {
     Call<Login> getLogin();
 
     @GET("?method=flickr.photosets.getList")
-    Call<PhotosetsContainer> getPhotosets();
+    Call<PhotosetsContainer> getPhotosets(
+            @Query("user_id") String userId
+    );
 
     @GET("?method=flickr.photosets.getPhotos")
     Call<PhotosPhotosetContainer> getPhotos(

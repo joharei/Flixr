@@ -16,7 +16,7 @@ public class Constants {
 
     public static final String THUMBNAIL_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg";
     public static final String FULLSCREEN_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_h.jpg";
-    public static final String BUDDY_ICON_URL_FORMAT = "http://farm%d.staticflickr.com/%d/buddyicons/%s.jpg";
+    public static final String BUDDY_ICON_URL_FORMAT = "http://farm%d.staticflickr.com/%d/buddyicons/%s_r.jpg";
     public static final String MISSING_BUDDY_ICON_URL = "https://www.flickr.com/images/buddyicon.gif";
 
     public static final int BACKGROUND_UPDATE_DELAY = 300;
