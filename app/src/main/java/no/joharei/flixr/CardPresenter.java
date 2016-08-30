@@ -51,8 +51,6 @@ public class CardPresenter extends Presenter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        Log.d(TAG, "onCreateViewHolder");
-
         final Context context = parent.getContext();
         sDefaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background);
         sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background);
@@ -74,7 +72,6 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        Log.d(TAG, "onBindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
         cardView.setMainImageDimensions(ViewGroup.LayoutParams.WRAP_CONTENT, CARD_HEIGHT);
@@ -99,6 +96,7 @@ public class CardPresenter extends Presenter {
             cardView.setTitleText(!(contact.getRealname() == null || contact.getRealname().isEmpty()) ?
                     contact.getRealname() :
                     contact.getUsername());
+            Log.d(TAG, "Contact photo: " + contact.getCardImageUrl());
             Picasso.with(context)
                     .load(contact.getCardImageUrl())
                     .error(mDefaultCardImage)
@@ -108,7 +106,6 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
-        Log.d(TAG, "onUnbindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
         // Remove references to images so that the garbage collector can free up memory
         cardView.setBadgeImage(null);
