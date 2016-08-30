@@ -77,7 +77,7 @@ public class CardPresenter extends Presenter {
         Log.d(TAG, "onBindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+        cardView.setMainImageDimensions(ViewGroup.LayoutParams.WRAP_CONTENT, CARD_HEIGHT);
         Context context = viewHolder.view.getContext();
         if (item instanceof Photoset) {
             Photoset photoset = (Photoset) item;
