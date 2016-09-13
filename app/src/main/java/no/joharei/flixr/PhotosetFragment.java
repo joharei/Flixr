@@ -1,22 +1,19 @@
 package no.joharei.flixr;
 
 
-import android.content.Intent;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v17.leanback.app.VerticalGridFragment;
-import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v17.leanback.widget.VerticalGridPresenter;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
+import no.joharei.flixr.adapters.PhotoAdapter;
+import no.joharei.flixr.decorations.SpacesItemDecoration;
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
-import no.joharei.flixr.network.models.Photo;
 import no.joharei.flixr.network.models.PhotosPhotosetContainer;
 import no.joharei.flixr.network.services.FlickrService;
 import no.joharei.flixr.preferences.CommonPreferences;
@@ -24,15 +21,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PhotosetFragment extends VerticalGridFragment {
+public class PhotosetFragment extends Fragment {
 
     public static final String PHOTOSET_ID = "photosetId";
     public static final String USER_ID = "userId";
     private static final String TAG = PhotosetFragment.class.getSimpleName();
-    private static final int NUM_COLUMNS = 4;
-    private ArrayObjectAdapter mAdapter;
+    private static final int NUM_COLUMNS = 6;
+    private PhotoAdapter mAdapter;
     private long photosetId;
-    private ArrayList<Photo> photos;
     private String userId;
 
     public static PhotosetFragment newInstance(long photosetId, String userId) {
@@ -48,32 +44,26 @@ public class PhotosetFragment extends VerticalGridFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-
         super.onCreate(savedInstanceState);
 
-        VerticalGridPresenter gridPresenter = new VerticalGridPresenter();
-        gridPresenter.setNumberOfColumns(NUM_COLUMNS);
-        setGridPresenter(gridPresenter);
-
-        mAdapter = new ArrayObjectAdapter(new CardPresenter());
-        setAdapter(mAdapter);
-        setOnItemViewClickedListener(new OnItemViewClickedListener() {
-            @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if (item instanceof Photo && photos != null) {
-                    Intent intent = new Intent(getActivity(), PhotoViewerActivity.class);
-                    intent.putParcelableArrayListExtra(PhotoViewerActivity.PHOTOS_NAME, photos);
-                    intent.putExtra(PhotoViewerActivity.PHOTO_POSITION, photos.indexOf(item));
-                    startActivity(intent);
-                }
-            }
-        });
+        mAdapter = new PhotoAdapter(getActivity());
 
         Bundle arguments = getArguments();
         photosetId = arguments.getLong(PHOTOSET_ID);
         userId = arguments.getString(USER_ID);
         loadPhotos();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_photoset, container, false);
+
+        RecyclerView imageGrid = (RecyclerView) rootView.findViewById(R.id.image_grid);
+        imageGrid.setAdapter(mAdapter);
+        imageGrid.setLayoutManager(new GridLayoutManager(getActivity(), NUM_COLUMNS));
+        imageGrid.addItemDecoration(new SpacesItemDecoration(Utils.convertDpToPixel(getActivity(), 4)));
+        return rootView;
     }
 
     private void loadPhotos() {
@@ -85,9 +75,7 @@ public class PhotosetFragment extends VerticalGridFragment {
             @Override
             public void onResponse(Call<PhotosPhotosetContainer> call, Response<PhotosPhotosetContainer> response) {
                 if (response.isSuccessful()) {
-                    photos = new ArrayList<>();
-                    photos.addAll(response.body().getPhotoset().getPhoto());
-                    mAdapter.addAll(0, photos);
+                    mAdapter.swap(response.body().getPhotoset().getPhoto());
                 }
             }
 

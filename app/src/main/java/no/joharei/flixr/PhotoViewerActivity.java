@@ -36,18 +36,15 @@ public class PhotoViewerActivity extends Activity {
         });
         if (position >= 0) {
             viewPager.setCurrentItem(position);
-            viewPager.post(new Runnable() {
-                @Override
-                public void run() {
-                    fadeOutTitle(position);
-                }
-            });
+            viewPager.post(() -> fadeOutTitle(position));
         }
     }
 
     private void fadeOutTitle(int position) {
         View imageTitle = viewPager.findViewWithTag("imageTitle" + position);
-        imageTitle.setAlpha(1);
-        imageTitle.animate().setStartDelay(2000).alpha(0).start();
+        if (imageTitle != null) {
+            imageTitle.setAlpha(1);
+            imageTitle.animate().setStartDelay(2000).alpha(0).start();
+        }
     }
 }
