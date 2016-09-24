@@ -16,11 +16,9 @@ import java.util.ArrayList;
 
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
-import no.joharei.flixr.network.models.PhotosPhotosetContainer;
 import no.joharei.flixr.network.models.Photoset;
-import no.joharei.flixr.network.models.PhotosetsContainer;
+import no.joharei.flixr.network.models.PhotosetsResponse;
 import no.joharei.flixr.network.services.FlickrService;
-import no.joharei.flixr.preferences.CommonPreferences;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,19 +72,19 @@ public class PhotosetsFragment extends VerticalGridFragment {
     private void loadPhotosets() {
         LocalCredentialStore localCredentialStore = new LocalCredentialStore(getActivity());
         FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, localCredentialStore);
-        Call<PhotosetsContainer> photosetsCall = flickrService.getPhotosets(userId);
-        photosetsCall.enqueue(new Callback<PhotosetsContainer>() {
+        Call<PhotosetsResponse> photosetsCall = flickrService.getPhotosets(userId);
+        photosetsCall.enqueue(new Callback<PhotosetsResponse>() {
             @Override
-            public void onResponse(Call<PhotosetsContainer> call, Response<PhotosetsContainer> response) {
+            public void onResponse(Call<PhotosetsResponse> call, Response<PhotosetsResponse> response) {
                 if (response.isSuccessful()) {
                     photosets = new ArrayList<>();
-                    photosets.addAll(response.body().getPhotosets().getPhotoset());
+                    photosets.addAll(response.body().getPhotosets());
                     mAdapter.addAll(0, photosets);
                 }
             }
 
             @Override
-            public void onFailure(Call<PhotosetsContainer> call, Throwable t) {
+            public void onFailure(Call<PhotosetsResponse> call, Throwable t) {
                 Log.e(TAG, "Failure getting photosets", t);
             }
         });

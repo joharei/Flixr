@@ -187,7 +187,7 @@ public class LoginActivity extends Activity {
                     if (response.isSuccessful()) {
                         User user = response.body().getUser();
                         CommonPreferences.setUserNsid(LoginActivity.this, user.getId());
-                        CommonPreferences.setUsername(LoginActivity.this, user.getUsername().getContent());
+                        CommonPreferences.setUsername(LoginActivity.this, user.getUsername());
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     } else {

@@ -1,10 +1,10 @@
 package no.joharei.flixr.network.services;
 
 
-import no.joharei.flixr.network.models.ContactsContainer;
+import no.joharei.flixr.network.models.ContactsResponse;
 import no.joharei.flixr.network.models.Login;
-import no.joharei.flixr.network.models.PhotosPhotosetContainer;
-import no.joharei.flixr.network.models.PhotosetsContainer;
+import no.joharei.flixr.network.models.PhotosResponse;
+import no.joharei.flixr.network.models.PhotosetsResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -14,16 +14,16 @@ public interface FlickrService {
     Call<Login> getLogin();
 
     @GET("?method=flickr.photosets.getList")
-    Call<PhotosetsContainer> getPhotosets(
+    Call<PhotosetsResponse> getPhotosets(
             @Query("user_id") String userId
     );
 
     @GET("?method=flickr.photosets.getPhotos")
-    Call<PhotosPhotosetContainer> getPhotos(
+    Call<PhotosResponse> getPhotos(
             @Query("photoset_id") long photosetId,
             @Query("user_id") String userId
     );
 
     @GET("?method=flickr.contacts.getList")
-    Call<ContactsContainer> getContacts();
+    Call<ContactsResponse> getContacts();
 }

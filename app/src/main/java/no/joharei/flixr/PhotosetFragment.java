@@ -14,7 +14,7 @@ import no.joharei.flixr.adapters.PhotoAdapter;
 import no.joharei.flixr.decorations.SpacesItemDecoration;
 import no.joharei.flixr.network.LocalCredentialStore;
 import no.joharei.flixr.network.ServiceGenerator;
-import no.joharei.flixr.network.models.PhotosPhotosetContainer;
+import no.joharei.flixr.network.models.PhotosResponse;
 import no.joharei.flixr.network.services.FlickrService;
 import no.joharei.flixr.preferences.CommonPreferences;
 import retrofit2.Call;
@@ -70,17 +70,17 @@ public class PhotosetFragment extends Fragment {
         LocalCredentialStore localCredentialStore = new LocalCredentialStore(getActivity());
         FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, localCredentialStore);
         String user = userId != null ? userId : CommonPreferences.getUserNsid(getActivity());
-        Call<PhotosPhotosetContainer> photosetCall = flickrService.getPhotos(photosetId, user);
-        photosetCall.enqueue(new Callback<PhotosPhotosetContainer>() {
+        Call<PhotosResponse> photosetCall = flickrService.getPhotos(photosetId, user);
+        photosetCall.enqueue(new Callback<PhotosResponse>() {
             @Override
-            public void onResponse(Call<PhotosPhotosetContainer> call, Response<PhotosPhotosetContainer> response) {
+            public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                 if (response.isSuccessful()) {
-                    mAdapter.swap(response.body().getPhotoset().getPhoto());
+                    mAdapter.swap(response.body().getPhotos());
                 }
             }
 
             @Override
-            public void onFailure(Call<PhotosPhotosetContainer> call, Throwable t) {
+            public void onFailure(Call<PhotosResponse> call, Throwable t) {
 
             }
         });

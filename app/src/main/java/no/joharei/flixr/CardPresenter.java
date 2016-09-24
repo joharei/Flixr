@@ -78,8 +78,8 @@ public class CardPresenter extends Presenter {
         Context context = viewHolder.view.getContext();
         if (item instanceof Photoset) {
             Photoset photoset = (Photoset) item;
-            cardView.setTitleText(photoset.getTitle().getContent());
-            cardView.setContentText(photoset.getDescription().getContent());
+            cardView.setTitleText(photoset.getTitle());
+            cardView.setContentText(photoset.getDescription());
             Picasso.with(context)
                     .load(photoset.getCardImageUrl())
                     .error(mDefaultCardImage)
@@ -93,9 +93,9 @@ public class CardPresenter extends Presenter {
                     .into(cardView.getMainImageView());
         } else if (item instanceof Contact) {
             Contact contact = (Contact) item;
-            cardView.setTitleText(!(contact.getRealname() == null || contact.getRealname().isEmpty()) ?
-                    contact.getRealname() :
-                    contact.getUsername());
+            cardView.setTitleText(!(contact.getRealName() == null || contact.getRealName().isEmpty()) ?
+                    contact.getRealName() :
+                    contact.getUserName());
             Log.d(TAG, "Contact photo: " + contact.getCardImageUrl());
             Picasso.with(context)
                     .load(contact.getCardImageUrl())
