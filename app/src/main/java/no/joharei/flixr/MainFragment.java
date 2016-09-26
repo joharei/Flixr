@@ -1,17 +1,3 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package no.joharei.flixr;
 
 import android.content.Intent;
@@ -80,7 +66,7 @@ public class MainFragment extends BrowseFragment {
 
         LocalCredentialStore credentialStore = new LocalCredentialStore(getActivity());
         if (credentialStore.noToken()) {
-            startActivity(new Intent(getActivity(), LoginActivity.class));
+            startActivity(Henson.with(getActivity()).gotoLoginActivity().build());
         } else {
             final FlickrService flickrService = ServiceGenerator.createService(FlickrService.class, new LocalCredentialStore(getActivity()));
 
@@ -223,20 +209,24 @@ public class MainFragment extends BrowseFragment {
             if (item instanceof Photoset) {
                 Photoset photoset = (Photoset) item;
                 Log.d(TAG, "Item: " + item.toString());
-                Intent intent = new Intent(getActivity(), PhotosetActivity.class);
-                intent.putExtra(PhotosetFragment.PHOTOSET_ID, photoset.getId());
 
 //                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 //                        getActivity(),
 //                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
 //                        PhotosetActivity.SHARED_ELEMENT_NAME).toBundle();
 //                getActivity().startActivity(intent, bundle);
-                getActivity().startActivity(intent);
+                Intent intent = Henson.with(getActivity())
+                        .gotoPhotosetActivity()
+                        .photosetId(photoset.getId())
+                        .build();
+                startActivity(intent);
             } else if (item instanceof Contact) {
                 Contact contact = (Contact) item;
-                Intent intent = new Intent(getActivity(), PhotosetActivity.class);
-                intent.putExtra(PhotosetsFragment.USER_ID, contact.getNsid());
-                getActivity().startActivity(intent);
+                Intent intent = Henson.with(getActivity())
+                        .gotoPhotosetActivity()
+                        .userId(contact.getNsid())
+                        .build();
+                startActivity(intent);
             } else if (item instanceof String) {
                 if (((String) item).contains(getString(R.string.error_fragment))) {
                     Intent intent = new Intent(getActivity(), BrowseErrorActivity.class);
@@ -265,13 +255,10 @@ public class MainFragment extends BrowseFragment {
 
         @Override
         public void run() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mBackgroundURL != null) {
-                        Log.d(TAG, mBackgroundURL);
-                        updateBackground(mBackgroundURL);
-                    }
+            mHandler.post(() -> {
+                if (mBackgroundURL != null) {
+                    Log.d(TAG, mBackgroundURL);
+                    updateBackground(mBackgroundURL);
                 }
             });
 

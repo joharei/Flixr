@@ -41,4 +41,9 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
+
+    compile 'com.f2prateek.dart:dart:2.0.1'
+    annotationProcessor 'com.f2prateek.dart:dart-processor:2.0.1'
+    compile 'com.f2prateek.dart:henson:2.0.1'
+    annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.1'
 }

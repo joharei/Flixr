@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.joharei.flixr.PhotoViewerActivity;
+import no.joharei.flixr.Henson;
 import no.joharei.flixr.R;
 import no.joharei.flixr.network.models.Photo;
 
@@ -57,9 +57,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                 .centerCrop()
                 .into(holder.imageView);
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PhotoViewerActivity.class);
-            intent.putParcelableArrayListExtra(PhotoViewerActivity.PHOTOS_NAME, photos);
-            intent.putExtra(PhotoViewerActivity.PHOTO_POSITION, position);
+            Intent intent = Henson.with(context)
+                    .gotoPhotoViewerActivity()
+                    .photos(photos)
+                    .position(position)
+                    .build();
             context.startActivity(intent);
         });
     }
