@@ -3,7 +3,7 @@ package no.joharei.flixr.login;
 import javax.inject.Inject;
 
 import no.joharei.flixr.api.FlickrApiContainer;
-import no.joharei.flixr.login.models.Login;
+import no.joharei.flixr.login.models.User;
 import no.joharei.flixr.tools.ObservableCache;
 import rx.Observable;
 
@@ -17,7 +17,7 @@ public class LoginApi {
         this.observableCache = observableCache;
     }
 
-    Observable<Login> getUserDetails() {
+    Observable<User> getUserDetails() {
         return flickrApiContainer.getUserDetails();
     }
 

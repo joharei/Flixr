@@ -3,8 +3,8 @@ package no.joharei.flixr.mainpage;
 import javax.inject.Inject;
 
 import no.joharei.flixr.api.FlickrApiContainer;
-import no.joharei.flixr.api.models.PhotosetsContainer;
-import no.joharei.flixr.mainpage.models.ContactsContainer;
+import no.joharei.flixr.api.models.Photosets;
+import no.joharei.flixr.mainpage.models.Contacts;
 import rx.Observable;
 
 public class MainApi {
@@ -15,11 +15,11 @@ public class MainApi {
         this.flickrApiContainer = flickrApiContainer;
     }
 
-    Observable<PhotosetsContainer> getMyPhotosets() {
+    Observable<Photosets> getMyPhotosets() {
         return flickrApiContainer.getPhotosets(null);
     }
 
-    Observable<ContactsContainer> getContacts() {
+    Observable<Contacts> getContacts() {
         return flickrApiContainer.getContacts();
     }
 }

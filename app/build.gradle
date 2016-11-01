@@ -53,4 +53,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
+
+    compile 'org.apache.commons:commons-lang3:3.5'
 }

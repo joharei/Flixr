@@ -1,18 +1,18 @@
 package no.joharei.flixr.api;
 
 
-import no.joharei.flixr.api.models.PhotosPhotosetContainer;
-import no.joharei.flixr.api.models.PhotosetsContainer;
-import no.joharei.flixr.login.models.Login;
-import no.joharei.flixr.mainpage.models.ContactsContainer;
+import no.joharei.flixr.api.models.PhotosPhotoset;
+import no.joharei.flixr.api.models.Photosets;
+import no.joharei.flixr.login.models.User;
+import no.joharei.flixr.mainpage.models.Contacts;
 import rx.Observable;
 
 public interface FlickrApiContainer {
-    Observable<Login> getUserDetails();
+    Observable<User> getUserDetails();
 
-    Observable<PhotosetsContainer> getPhotosets(String userId);
+    Observable<Photosets> getPhotosets(String userId);
 
-    Observable<PhotosPhotosetContainer> getPhotos(long photosetId, String userId);
+    Observable<PhotosPhotoset> getPhotos(long photosetId, String userId);
 
-    Observable<ContactsContainer> getContacts();
+    Observable<Contacts> getContacts();
 }

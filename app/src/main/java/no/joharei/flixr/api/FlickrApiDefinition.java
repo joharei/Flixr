@@ -1,29 +1,33 @@
 package no.joharei.flixr.api;
 
 
-import no.joharei.flixr.api.models.PhotosPhotosetContainer;
-import no.joharei.flixr.api.models.PhotosetsContainer;
-import no.joharei.flixr.login.models.Login;
-import no.joharei.flixr.mainpage.models.ContactsContainer;
+import no.joharei.flixr.api.models.PhotosPhotoset;
+import no.joharei.flixr.api.models.Photosets;
+import no.joharei.flixr.login.models.User;
+import no.joharei.flixr.mainpage.models.Contacts;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
 
 interface FlickrApiDefinition {
     @GET("?method=flickr.test.login")
-    Observable<Login> getUserDetails();
+    @ResponseEnvelopeConverterFactory.WrappedResponse
+    Observable<User> getUserDetails();
 
     @GET("?method=flickr.photosets.getList")
-    Observable<PhotosetsContainer> getPhotosets(
+    @ResponseEnvelopeConverterFactory.WrappedResponse
+    Observable<Photosets> getPhotosets(
             @Query("user_id") String userId
     );
 
     @GET("?method=flickr.photosets.getPhotos")
-    Observable<PhotosPhotosetContainer> getPhotos(
+    @ResponseEnvelopeConverterFactory.WrappedResponse
+    Observable<PhotosPhotoset> getPhotos(
             @Query("photoset_id") long photosetId,
             @Query("user_id") String userId
     );
 
     @GET("?method=flickr.contacts.getList")
-    Observable<ContactsContainer> getContacts();
+    @ResponseEnvelopeConverterFactory.WrappedResponse
+    Observable<Contacts> getContacts();
 }

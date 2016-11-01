@@ -1,11 +1,15 @@
 package no.joharei.flixr.photosets;
 
+import android.util.Log;
+
 import javax.inject.Inject;
 
 import no.joharei.flixr.MainApplication;
+import no.joharei.flixr.photos.PhotosPresenter;
 import no.joharei.flixr.tools.RxAssist;
 
 public class PhotosetsPresenter {
+    private static final String TAG = PhotosPresenter.class.getSimpleName();
     @Inject
     PhotosetsApi mainApi;
     private PhotosetsView view;
@@ -18,9 +22,10 @@ public class PhotosetsPresenter {
     void fetchPhotosets(String userId) {
         mainApi.getPhotosets(userId)
                 .compose(RxAssist.applyDefaultSchedulers())
-                .subscribe(photosetsContainer -> {
-                    view.showPhotosets(photosetsContainer.getPhotosets().getPhotoset());
+                .subscribe(photosets -> {
+                    view.showPhotosets(photosets.getPhotosets());
                 }, throwable -> {
+                    Log.e(TAG, "Failed fetching photosets", throwable);
                     // TODO
                 });
     }

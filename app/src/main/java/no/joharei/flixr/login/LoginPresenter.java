@@ -5,7 +5,6 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import no.joharei.flixr.MainApplication;
-import no.joharei.flixr.login.models.User;
 import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.tools.RxAssist;
 import rx.Subscription;
@@ -27,9 +26,8 @@ public class LoginPresenter {
         view.showProgress(true);
         Subscription detailsSub = loginApi.getUserDetails()
                 .compose(RxAssist.applyDefaultSchedulers())
-                .subscribe(login -> {
+                .subscribe(user -> {
                     view.showProgress(false);
-                    User user = login.getUser();
                     CommonPreferences.setUserNsid(view.getContext(), user.getId());
                     CommonPreferences.setUsername(view.getContext(), user.getUsername().getContent());
                     view.getUserDetailsCompleted();

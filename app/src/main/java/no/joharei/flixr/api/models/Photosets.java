@@ -1,6 +1,8 @@
 
 package no.joharei.flixr.api.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,90 +13,10 @@ public class Photosets {
     private int pages;
     private int perpage;
     private int total;
-    private List<Photoset> photoset = new ArrayList<>();
+    @SerializedName("photoset")
+    private List<Photoset> photosets = new ArrayList<>();
 
-    /**
-     * @return The cancreate
-     */
-    public int getCancreate() {
-        return cancreate;
+    public List<Photoset> getPhotosets() {
+        return photosets;
     }
-
-    /**
-     * @param cancreate The cancreate
-     */
-    public void setCancreate(int cancreate) {
-        this.cancreate = cancreate;
-    }
-
-    /**
-     * @return The page
-     */
-    public int getPage() {
-        return page;
-    }
-
-    /**
-     * @param page The page
-     */
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    /**
-     * @return The pages
-     */
-    public int getPages() {
-        return pages;
-    }
-
-    /**
-     * @param pages The pages
-     */
-    public void setPages(int pages) {
-        this.pages = pages;
-    }
-
-    /**
-     * @return The perpage
-     */
-    public int getPerpage() {
-        return perpage;
-    }
-
-    /**
-     * @param perpage The perpage
-     */
-    public void setPerpage(int perpage) {
-        this.perpage = perpage;
-    }
-
-    /**
-     * @return The total
-     */
-    public int getTotal() {
-        return total;
-    }
-
-    /**
-     * @param total The total
-     */
-    public void setTotal(int total) {
-        this.total = total;
-    }
-
-    /**
-     * @return The photoset
-     */
-    public List<Photoset> getPhotoset() {
-        return photoset;
-    }
-
-    /**
-     * @param photoset The photoset
-     */
-    public void setPhotoset(List<Photoset> photoset) {
-        this.photoset = photoset;
-    }
-
 }

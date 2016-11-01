@@ -21,8 +21,8 @@ public class PhotosPresenter {
     void fetchPhotos(long photosetId, String userId) {
         photosApi.getPhotos(photosetId, userId)
                 .compose(RxAssist.applyDefaultSchedulers())
-                .subscribe(photosPhotosetContainer -> {
-                    view.showPhotos(photosPhotosetContainer.getPhotoset().getPhoto());
+                .subscribe(photosPhotoset -> {
+                    view.showPhotos(photosPhotoset.getPhotos());
                 }, throwable -> {
                     Log.e(TAG, "Failed fetching photos", throwable);
                 });

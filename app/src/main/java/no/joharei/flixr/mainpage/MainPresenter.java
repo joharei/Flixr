@@ -1,11 +1,14 @@
 package no.joharei.flixr.mainpage;
 
+import android.util.Log;
+
 import javax.inject.Inject;
 
 import no.joharei.flixr.MainApplication;
 import no.joharei.flixr.tools.RxAssist;
 
 public class MainPresenter {
+    private static final String TAG = MainPresenter.class.getSimpleName();
     @Inject
     MainApi mainApi;
     private MainView view;
@@ -18,9 +21,10 @@ public class MainPresenter {
     void fetchMyPhotosets() {
         mainApi.getMyPhotosets()
                 .compose(RxAssist.applyDefaultSchedulers())
-                .subscribe(photosetsContainer -> {
-                    view.showMyPhotosets(photosetsContainer.getPhotosets().getPhotoset());
+                .subscribe(photosets -> {
+                    view.showMyPhotosets(photosets.getPhotosets());
                 }, throwable -> {
+                    Log.e(TAG, "Failed fetching my photosets", throwable);
                     // TODO
                 });
     }
@@ -28,9 +32,10 @@ public class MainPresenter {
     void fetchMyContacts() {
         mainApi.getContacts()
                 .compose(RxAssist.applyDefaultSchedulers())
-                .subscribe(photosetsContainer -> {
-                    view.showMyContacts(photosetsContainer.getContacts().getContact());
+                .subscribe(contacts -> {
+                    view.showMyContacts(contacts.getContacts());
                 }, throwable -> {
+                    Log.e(TAG, "Failed fetching my contacts", throwable);
                     // TODO
                 });
     }
