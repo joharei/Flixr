@@ -4,7 +4,7 @@
     android:id="@+id/activity_photo_viewer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="no.joharei.flixr.PhotoViewerActivity">
+    tools:context="no.joharei.flixr.photo.PhotoViewerActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
