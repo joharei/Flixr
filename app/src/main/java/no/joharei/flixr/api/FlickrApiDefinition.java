@@ -1,7 +1,7 @@
 package no.joharei.flixr.api;
 
 
-import no.joharei.flixr.api.models.PhotosPhotoset;
+import no.joharei.flixr.api.models.Photos;
 import no.joharei.flixr.api.models.Photosets;
 import no.joharei.flixr.login.models.User;
 import no.joharei.flixr.mainpage.models.Contacts;
@@ -22,7 +22,7 @@ interface FlickrApiDefinition {
 
     @GET("?method=flickr.photosets.getPhotos")
     @ResponseEnvelopeConverterFactory.WrappedResponse
-    Observable<PhotosPhotoset> getPhotos(
+    Observable<Photos> getPhotos(
             @Query("photoset_id") long photosetId,
             @Query("user_id") String userId
     );

@@ -1,6 +1,6 @@
 package no.joharei.flixr.api;
 
-import no.joharei.flixr.api.models.PhotosPhotoset;
+import no.joharei.flixr.api.models.Photos;
 import no.joharei.flixr.api.models.Photosets;
 import no.joharei.flixr.login.models.User;
 import no.joharei.flixr.mainpage.models.Contacts;
@@ -40,7 +40,7 @@ public class AndroidFlickrApi implements FlickrApiContainer {
     }
 
     @Override
-    public Observable<PhotosPhotoset> getPhotos(long photosetId, String userId) {
+    public Observable<Photos> getPhotos(long photosetId, String userId) {
         return api.getPhotos(photosetId, userId);
     }
 

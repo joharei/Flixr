@@ -32,12 +32,12 @@ public class Photoset {
         return photos;
     }
 
-    public Title getTitle() {
-        return title;
+    public String getTitle() {
+        return title.getContent();
     }
 
-    public Description getDescription() {
-        return description;
+    public String getDescription() {
+        return description.getContent();
     }
 
     public String getCardImageUrl() {

@@ -29,16 +29,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import no.joharei.flixr.CardPresenter;
+import no.joharei.flixr.Henson;
 import no.joharei.flixr.R;
 import no.joharei.flixr.api.LocalCredentialStore;
 import no.joharei.flixr.api.models.Photoset;
 import no.joharei.flixr.error.BrowseErrorActivity;
-import no.joharei.flixr.login.LoginActivity;
 import no.joharei.flixr.mainpage.models.Contact;
-import no.joharei.flixr.photos.PhotosActivity;
-import no.joharei.flixr.photos.PhotosFragment;
-import no.joharei.flixr.photosets.PhotosetsActivity;
-import no.joharei.flixr.photosets.PhotosetsFragment;
 import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.utils.Constants;
 
@@ -191,16 +187,20 @@ public class MainFragment extends BrowseFragment implements MainView {
                 Photoset photoset = (Photoset) item;
                 Log.d(TAG, "Item: " + item.toString());
                 Intent intent = Henson.with(getActivity())
-                        .gotoPhotosetActivity()
+                        .gotoPhotosActivity()
                         .photosetId(photoset.getId())
                         .build();
                 startActivity(intent);
             } else if (item instanceof Contact) {
                 Contact contact = (Contact) item;
                 Intent intent = Henson.with(getActivity())
-                        .gotoPhotosetActivity()
+                        .gotoPhotosetsActivity()
+                        .build();
+                Intent extras = Henson.with(getActivity())
+                        .gotoPhotosetsFragment()
                         .userId(contact.getNsid())
                         .build();
+                intent.putExtras(extras);
                 startActivity(intent);
             } else if (item instanceof String) {
                 if (((String) item).contains(getString(R.string.error_fragment))) {

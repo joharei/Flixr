@@ -5,6 +5,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import no.joharei.flixr.MainApplication;
+import no.joharei.flixr.preferences.CommonPreferences;
 import no.joharei.flixr.tools.RxAssist;
 
 public class PhotosPresenter {
@@ -19,7 +20,8 @@ public class PhotosPresenter {
     }
 
     void fetchPhotos(long photosetId, String userId) {
-        photosApi.getPhotos(photosetId, userId)
+        String user = userId != null ? userId : CommonPreferences.getUserNsid(view.getContext());
+        photosApi.getPhotos(photosetId, user)
                 .compose(RxAssist.applyDefaultSchedulers())
                 .subscribe(photosPhotoset -> {
                     view.showPhotos(photosPhotoset.getPhotos());

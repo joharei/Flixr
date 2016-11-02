@@ -1,36 +1,29 @@
 package no.joharei.flixr.photosets;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v17.leanback.app.VerticalGridFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
+
 import java.util.List;
 
 import no.joharei.flixr.CardPresenter;
+import no.joharei.flixr.Henson;
 import no.joharei.flixr.api.models.Photoset;
-import no.joharei.flixr.photos.PhotosActivity;
-import no.joharei.flixr.photos.PhotosFragment;
 
 public class PhotosetsFragment extends VerticalGridFragment implements PhotosetsView {
 
-    public static final String USER_ID = "userId";
     private static final int NUM_COLUMNS = 4;
+    @InjectExtra
+    String userId;
     private ArrayObjectAdapter mAdapter;
-    private String userId;
     private PhotosetsPresenter photosetsPresenter;
-
-    public static PhotosetsFragment newInstance(String userId) {
-        PhotosetsFragment fragment = new PhotosetsFragment();
-
-        Bundle args = new Bundle();
-        args.putString(USER_ID, userId);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,15 +41,22 @@ public class PhotosetsFragment extends VerticalGridFragment implements Photosets
         setOnItemViewClickedListener((itemViewHolder, item, rowViewHolder, row) -> {
             if (item instanceof Photoset) {
                 Photoset photoset = (Photoset) item;
-                Intent intent = new Intent(getActivity(), PhotosActivity.class);
-                intent.putExtra(PhotosFragment.PHOTOSET_ID, photoset.getId());
-                intent.putExtra(PhotosFragment.USER_ID, userId);
+                Intent intent = Henson.with(getActivity())
+                        .gotoPhotosActivity()
+                        .photosetId(photoset.getId())
+                        .userId(userId)
+                        .build();
                 getActivity().startActivity(intent);
             }
         });
 
-        userId = getArguments().getString(USER_ID);
         loadPhotosets();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Dart.inject(this, getActivity());
     }
 
     private void loadPhotosets() {
