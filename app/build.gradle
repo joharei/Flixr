@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 25
@@ -9,10 +11,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-
-        jackOptions {
-            enabled true
-        }
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -32,30 +30,47 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+ext {
+    ankoVersion = '0.9'
+    supportLibVersion = '25.0.0'
+    okhttp3Version = '3.4.1'
+    retrofitVersion = '2.1.0'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:recyclerview-v7:25.0.0'
-    compile 'com.android.support:leanback-v17:25.0.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    compile "org.jetbrains.anko:anko-sdk21:$ankoVersion"
+    compile "org.jetbrains.anko:anko-appcompat-v7:$ankoVersion"
+    compile "org.jetbrains.anko:anko-recyclerview-v7:$ankoVersion"
+
+    compile "com.android.support:recyclerview-v7:$supportLibVersion"
+    compile "com.android.support:leanback-v17:$supportLibVersion"
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
 
     // Dagger
     compile 'com.google.dagger:dagger:2.7'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
+    kapt 'com.google.dagger:dagger-compiler:2.7'
 
     // RxJava
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.2.1'
 
     // networking
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile "com.squareup.okhttp3:okhttp:$okhttp3Version"
+    compile "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:$okhttp3Version"
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
@@ -63,7 +78,11 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
 
     compile 'com.f2prateek.dart:dart:2.0.1'
-    annotationProcessor 'com.f2prateek.dart:dart-processor:2.0.1'
+    kapt 'com.f2prateek.dart:dart-processor:2.0.1'
     compile 'com.f2prateek.dart:henson:2.0.1'
-    annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.1'
+    kapt 'com.f2prateek.dart:henson-processor:2.0.1'
+}
+
+kapt {
+    generateStubs = true
 }
