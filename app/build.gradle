@@ -40,29 +40,34 @@ ext {
     supportLibVersion = '25.0.0'
     okhttp3Version = '3.4.1'
     retrofitVersion = '2.1.0'
+    daggerVersion = '2.7'
+    rxJavaVersion = '1.2.1'
+    dartVersion = '2.0.1'
+    parcelerVersion = '1.1.6'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    // Kotlin & Anko
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
     compile "org.jetbrains.anko:anko-sdk21:$ankoVersion"
     compile "org.jetbrains.anko:anko-appcompat-v7:$ankoVersion"
     compile "org.jetbrains.anko:anko-recyclerview-v7:$ankoVersion"
 
+    // Support libraries
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:leanback-v17:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
 
     // Dagger
-    compile 'com.google.dagger:dagger:2.7'
-    kapt 'com.google.dagger:dagger-compiler:2.7'
+    compile "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // RxJava
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.2.1'
+    compile "io.reactivex:rxandroid:$rxJavaVersion"
+    compile "io.reactivex:rxjava:$rxJavaVersion"
 
     // networking
     compile "com.squareup.okhttp3:okhttp:$okhttp3Version"
@@ -74,13 +79,17 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.akerfeldt:okhttp-signpost:1.1.0'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
+    compile 'com.google.code.gson:gson:2.8.0'
 
-    compile 'org.apache.commons:commons-lang3:3.5'
+    // Dart & Henson
+    compile "com.f2prateek.dart:dart:$dartVersion"
+    kapt "com.f2prateek.dart:dart-processor:$dartVersion"
+    compile "com.f2prateek.dart:henson:$dartVersion"
+    kapt "com.f2prateek.dart:henson-processor:$dartVersion"
 
-    compile 'com.f2prateek.dart:dart:2.0.1'
-    kapt 'com.f2prateek.dart:dart-processor:2.0.1'
-    compile 'com.f2prateek.dart:henson:2.0.1'
-    kapt 'com.f2prateek.dart:henson-processor:2.0.1'
+    // Parceler
+    compile "org.parceler:parceler-api:$parcelerVersion"
+    kapt "org.parceler:parceler:$parcelerVersion"
 }
 
 kapt {

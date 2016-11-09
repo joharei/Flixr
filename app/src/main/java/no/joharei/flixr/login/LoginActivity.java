@@ -17,8 +17,8 @@ import android.widget.ProgressBar;
 import com.f2prateek.dart.HensonNavigable;
 
 import no.joharei.flixr.R;
-import no.joharei.flixr.api.AuthToken;
 import no.joharei.flixr.api.LocalCredentialStore;
+import no.joharei.flixr.api.models.AuthToken;
 import no.joharei.flixr.mainpage.MainActivity;
 import no.joharei.flixr.utils.ApiKeys;
 import no.joharei.flixr.utils.Constants;
