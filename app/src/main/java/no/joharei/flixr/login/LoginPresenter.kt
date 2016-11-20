@@ -21,14 +21,16 @@ class LoginPresenter : AnkoLogger {
     }
 
     fun getUserDetails() {
-        val detailsSub = loginApi.userDetails
+        val detailsSub = loginApi.fetchUserDetails()
                 .compose<User>(RxAssist.applyDefaultSchedulers<User>())
-                .subscribe({ user ->
-                    view.showProgress(false)
-                    CommonPreferences.setUserNsid(view.context, user.id)
-                    CommonPreferences.setUsername(view.context, user.username)
-                    view.getUserDetailsCompleted()
-                }) { throwable -> error("Error getting user details", throwable) }
+                .subscribe(
+                        { user ->
+                            view.showProgress(false)
+                            CommonPreferences.setUserNsid(view.context, user.id)
+                            CommonPreferences.setUsername(view.context, user.username)
+                            view.getUserDetailsCompleted()
+                        },
+                        { throwable -> error("Error getting user details", throwable) })
         compositeSubscription.add(detailsSub)
     }
 

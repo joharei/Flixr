@@ -37,7 +37,7 @@ android {
 
 ext {
     ankoVersion = '0.9'
-    supportLibVersion = '25.0.0'
+    supportLibVersion = '25.0.1'
     okhttp3Version = '3.4.1'
     retrofitVersion = '2.1.0'
     daggerVersion = '2.7'
@@ -59,7 +59,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:leanback-v17:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Dagger
     compile "com.google.dagger:dagger:$daggerVersion"

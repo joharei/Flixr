@@ -10,8 +10,9 @@ class LoginApi
 @Inject
 constructor(private val flickrApiContainer: FlickrApiContainer, private val observableCache: ObservableCache) {
 
-    internal val userDetails: Observable<User>
-        get() = flickrApiContainer.getUserDetails()
+    fun fetchUserDetails(): Observable<User> {
+        return flickrApiContainer.getUserDetails()
+    }
 
     fun clearCache() {
         observableCache.clearCache()
