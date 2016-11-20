@@ -43,7 +43,7 @@ ext {
     daggerVersion = '2.7'
     rxJavaVersion = '1.2.1'
     dartVersion = '2.0.1'
-    parcelerVersion = '1.1.6'
+    paperParcelVersion = '1.0.1'
 }
 
 dependencies {
@@ -87,9 +87,10 @@ dependencies {
     compile "com.f2prateek.dart:henson:$dartVersion"
     kapt "com.f2prateek.dart:henson-processor:$dartVersion"
 
-    // Parceler
-    compile "org.parceler:parceler-api:$parcelerVersion"
-    kapt "org.parceler:parceler:$parcelerVersion"
+    // PaperParcel
+    compile "com.github.grandstaish.paperparcel:paperparcel:$paperParcelVersion"
+    compile "com.github.grandstaish.paperparcel:paperparcel-kotlin:$paperParcelVersion"
+    kapt "com.github.grandstaish.paperparcel:compiler:$paperParcelVersion"
 }
 
 kapt {

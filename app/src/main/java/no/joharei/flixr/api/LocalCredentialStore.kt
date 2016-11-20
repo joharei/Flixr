@@ -11,11 +11,7 @@ private const val TOKEN_PREFS = "token_preferences"
 
 class LocalCredentialStore @Inject constructor(context: Context) {
 
-    private val prefs: SharedPreferences
-
-    init {
-        prefs = context.getSharedPreferences(TOKEN_PREFS, Context.MODE_PRIVATE)
-    }
+    private val prefs: SharedPreferences = context.getSharedPreferences(TOKEN_PREFS, Context.MODE_PRIVATE)
 
     val token: AuthToken
         get() = AuthToken(

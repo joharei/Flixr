@@ -5,28 +5,28 @@ import no.joharei.flixr.utils.Constants
 import java.util.*
 
 data class Photoset(
-        val id: Long = 0,
-        val primary: Long = 0,
-        val secret: String? = null,
-        val server: Int = 0,
-        val farm: Int = 0,
-        val photos: Int = 0,
-        val videos: String? = null,
+        val id: Long,
+        val primary: Long,
+        val secret: String,
+        val server: Int,
+        val farm: Int,
+        val photos: Int,
+        val videos: String,
         @SerializedName("title")
-        val titleEnvelope: Title? = null,
+        val titleEnvelope: Title,
         @SerializedName("description")
-        val descriptionEnvelope: Description? = null,
-        val needsInterstitial: Int = 0,
-        val visibilityCanSeeSet: Int = 0,
-        val countViews: String? = null,
-        val countComments: String? = null,
-        val canComment: Int = 0,
-        val dateCreate: String? = null,
-        val dateUpdate: String? = null
+        val descriptionEnvelope: Description,
+        val needsInterstitial: Int,
+        val visibilityCanSeeSet: Int,
+        val countViews: String,
+        val countComments: String,
+        val canComment: Int,
+        val dateCreate: String,
+        val dateUpdate: String
 ) {
-    val title: String get() = titleEnvelope!!.content
+    val title: String get() = titleEnvelope.content
 
-    val description: String get() = descriptionEnvelope!!.content
+    val description: String get() = descriptionEnvelope.content
 
     val cardImageUrl: String
         get() = String.format(Locale.getDefault(),

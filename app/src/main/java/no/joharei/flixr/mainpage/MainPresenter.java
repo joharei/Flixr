@@ -15,7 +15,7 @@ public class MainPresenter {
 
     void attachView(MainView view) {
         this.view = view;
-        MainApplication.component(view.getContext()).inject(this);
+        MainApplication.component.inject(this);
     }
 
     void fetchMyPhotosets() {

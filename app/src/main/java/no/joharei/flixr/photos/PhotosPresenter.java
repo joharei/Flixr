@@ -16,7 +16,7 @@ public class PhotosPresenter {
 
     void attachView(PhotosView view) {
         this.view = view;
-        MainApplication.component(view.getContext()).inject(this);
+        MainApplication.component.inject(this);
     }
 
     void fetchPhotos(long photosetId, String userId) {

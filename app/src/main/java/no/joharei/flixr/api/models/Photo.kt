@@ -2,25 +2,26 @@ package no.joharei.flixr.api.models
 
 import com.google.gson.annotations.SerializedName
 import no.joharei.flixr.utils.Constants
-import org.parceler.Parcel
+import nz.bradcampbell.paperparcel.PaperParcel
+import nz.bradcampbell.paperparcel.PaperParcelable
 import java.util.*
 
-@Parcel
+@PaperParcel
 data class Photo(
-        val id: Long = 0,
-        val secret: String? = null,
-        val server: Int = 0,
-        val farm: Int = 0,
-        val title: String? = null,
+        val id: Long,
+        val secret: String,
+        val server: Int,
+        val farm: Int,
+        val title: String,
         @SerializedName("isprimary")
-        val isPrimary: String? = null,
+        val isPrimary: String,
         @SerializedName("ispublic")
-        val isPublic: Int = 0,
+        val isPublic: Int,
         @SerializedName("isfriend")
-        val isFriend: Int = 0,
+        val isFriend: Int,
         @SerializedName("isfamily")
-        val isFamily: Int = 0
-) {
+        val isFamily: Int
+) : PaperParcelable {
     val cardImageUrl: String
         get() = String.format(Locale.getDefault(),
                 Constants.THUMBNAIL_URL_FORMAT,
@@ -38,4 +39,8 @@ data class Photo(
                 id,
                 secret
         )
+
+    companion object {
+        @JvmField val CREATOR = PaperParcelable.Creator(Photo::class.java)
+    }
 }

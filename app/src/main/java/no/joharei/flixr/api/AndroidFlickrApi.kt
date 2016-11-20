@@ -12,11 +12,7 @@ import rx.Observable
 
 class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String) : FlickrApiContainer {
 
-    private val api: FlickrApiDefinition
-
-    init {
-        api = createApiClient(okHttpClient, url)
-    }
+    private val api: FlickrApiDefinition = createApiClient(okHttpClient, url)
 
     private fun createApiClient(okHttpClient: OkHttpClient, url: String): FlickrApiDefinition {
         val retrofit = Retrofit.Builder()

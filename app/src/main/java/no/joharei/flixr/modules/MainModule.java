@@ -33,6 +33,7 @@ public class MainModule {
 
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET);
         AuthToken authToken = localCredentialStore.getToken();
+        // TODO: refresh somehow?
         consumer.setTokenWithSecret(authToken.getAuthToken(), authToken.getAuthTokenSecret());
         clientBuilder.addInterceptor(new SigningInterceptor(consumer));
 
