@@ -1,9 +1,8 @@
 package no.joharei.flixr.login
 
 import no.joharei.flixr.MainApplication
-import no.joharei.flixr.login.models.User
 import no.joharei.flixr.preferences.CommonPreferences
-import no.joharei.flixr.tools.RxAssist
+import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import rx.subscriptions.CompositeSubscription
@@ -22,7 +21,7 @@ class LoginPresenter : AnkoLogger {
 
     fun getUserDetails() {
         val detailsSub = loginApi.fetchUserDetails()
-                .compose<User>(RxAssist.applyDefaultSchedulers<User>())
+                .applyDefaultSchedulers()
                 .subscribe(
                         { user ->
                             view.showProgress(false)

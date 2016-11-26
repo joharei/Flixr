@@ -3,6 +3,7 @@ package no.joharei.flixr.photos
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.support.annotation.Nullable
 import android.support.v7.widget.GridLayoutManager
 import android.view.Gravity
 import com.f2prateek.dart.Dart
@@ -15,26 +16,27 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.wrapContent
 
-const val NUM_COLUMNS = 6
 
 class PhotosActivity : Activity(), PhotosView {
-    @JvmField
     @InjectExtra
-    var photosetId: Long = 0
     @JvmField
+    internal var photosetId: Long = 0
+    @Nullable
     @InjectExtra
-    var userId: String? = null
-    lateinit private var photoAdapter: PhotoAdapter
+    @JvmField
+    internal var userId: String? = null
+    private val photoAdapter by lazy {
+        PhotoAdapter(this)
+    }
     private val photosPresenter: PhotosPresenter = PhotosPresenter()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Dart.inject(this)
 
-        photoAdapter = PhotoAdapter(this)
         frameLayout {
             recyclerView {
-                layoutManager = GridLayoutManager(this@PhotosActivity, NUM_COLUMNS)
+                layoutManager = GridLayoutManager(this@PhotosActivity, 6)
                 addItemDecoration(SpacesItemDecoration(Utils.convertDpToPixel(this@PhotosActivity, 4)))
                 adapter = photoAdapter
             }.lparams(wrapContent, matchParent) {
@@ -44,8 +46,12 @@ class PhotosActivity : Activity(), PhotosView {
 
         photosPresenter.attachView(this)
 
-
         loadPhotos()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        photosPresenter.stop()
     }
 
     private fun loadPhotos() {

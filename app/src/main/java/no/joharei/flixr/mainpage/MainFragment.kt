@@ -28,20 +28,20 @@ import java.util.*
 
 class MainFragment : BrowseFragment(), MainView, AnkoLogger {
 
-    val mHandler = Handler()
-    val mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
-    val mDefaultBackground: Drawable by lazy {
+    private val mHandler = Handler()
+    private val mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
+    private val mDefaultBackground: Drawable by lazy {
         ContextCompat.getDrawable(activity, R.drawable.default_background)
     }
-    val mMetrics: DisplayMetrics by lazy {
+    private val mMetrics: DisplayMetrics by lazy {
         DisplayMetrics()
     }
-    var mBackgroundTimer: Timer? = null
-    var mBackgroundURL: String? = null
-    val mBackgroundManager: BackgroundManager by lazy {
+    private var mBackgroundTimer: Timer? = null
+    private var mBackgroundURL: String? = null
+    private val mBackgroundManager: BackgroundManager by lazy {
         BackgroundManager.getInstance(activity)
     }
-    val mBackgroundTarget = object : Target {
+    private val mBackgroundTarget = object : Target {
         override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
             mBackgroundManager.setBitmap(bitmap)
         }
@@ -52,11 +52,11 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
         }
     }
-    val mainPresenter = MainPresenter()
-    val photosetAdapter by lazy {
+    private val mainPresenter = MainPresenter()
+    private val photosetAdapter by lazy {
         ArrayObjectAdapter(CardPresenter())
     }
-    val contactsAdapter by lazy {
+    private val contactsAdapter by lazy {
         ArrayObjectAdapter(CardPresenter())
     }
 
@@ -80,6 +80,11 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         }
 
         setupEventListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mainPresenter.stop()
     }
 
     override fun onDestroy() {

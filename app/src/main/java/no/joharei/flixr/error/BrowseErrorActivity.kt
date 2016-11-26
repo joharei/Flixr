@@ -1,12 +1,11 @@
-package no.joharei.flixr.mainpage
+package no.joharei.flixr.error
 
 import android.app.Activity
 import android.os.Bundle
 
-class MainActivity : Activity() {
-
+class BrowseErrorActivity : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.beginTransaction().add(android.R.id.content, MainFragment()).commit()
+        fragmentManager.beginTransaction().add(android.R.id.content, ErrorFragment()).commit()
     }
 }

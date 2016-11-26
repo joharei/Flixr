@@ -7,11 +7,10 @@ import oauth.signpost.OAuth.OAUTH_TOKEN
 import oauth.signpost.OAuth.OAUTH_TOKEN_SECRET
 import javax.inject.Inject
 
-private const val TOKEN_PREFS = "token_preferences"
 
 class LocalCredentialStore @Inject constructor(context: Context) {
 
-    private val prefs: SharedPreferences = context.getSharedPreferences(TOKEN_PREFS, Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences = context.getSharedPreferences("token_preferences", Context.MODE_PRIVATE)
 
     val token: AuthToken
         get() = AuthToken(

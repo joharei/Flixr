@@ -1,9 +1,7 @@
 package no.joharei.flixr.mainpage
 
 import no.joharei.flixr.MainApplication
-import no.joharei.flixr.api.models.Photosets
-import no.joharei.flixr.mainpage.models.Contacts
-import no.joharei.flixr.tools.RxAssist
+import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import rx.subscriptions.CompositeSubscription
@@ -22,7 +20,7 @@ class MainPresenter : AnkoLogger {
 
     fun fetchMyPhotosets() {
         val photosetsSub = mainApi.fetchMyPhotosets()
-                .compose<Photosets>(RxAssist.applyDefaultSchedulers<Photosets>())
+                .applyDefaultSchedulers()
                 .subscribe(
                         { photosets -> view.showMyPhotosets(photosets.photosets) },
                         { throwable ->
@@ -34,7 +32,7 @@ class MainPresenter : AnkoLogger {
 
     fun fetchMyContacts() {
         val contactsSub = mainApi.fetchContacts()
-                .compose<Contacts>(RxAssist.applyDefaultSchedulers<Contacts>())
+                .applyDefaultSchedulers()
                 .subscribe(
                         { contacts -> view.showMyContacts(contacts.contacts) },
                         { throwable ->
