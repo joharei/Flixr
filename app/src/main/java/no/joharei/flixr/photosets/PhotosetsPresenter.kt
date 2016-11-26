@@ -19,10 +19,14 @@ class PhotosetsPresenter : AnkoLogger {
     }
 
     internal fun fetchPhotosets(userId: String?) {
+        view.showProgress()
         mainApi.getPhotosets(userId)
                 .applyDefaultSchedulers()
                 .subscribe(
-                        { photosets -> view.showPhotosets(photosets.photosets) },
+                        { photosets ->
+                            view.hideProgress()
+                            view.showPhotosets(photosets.photosets)
+                        },
                         { throwable ->
                             error("Failed fetching photosets", throwable)
                             // TODO

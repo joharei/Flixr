@@ -7,5 +7,9 @@ import no.joharei.flixr.api.models.Photoset
 internal interface PhotosetsView {
     fun getContext(): Context
 
+    fun showProgress()
+
+    fun hideProgress()
+
     fun showPhotosets(photosets: List<Photoset>)
 }

@@ -1,6 +1,7 @@
 package no.joharei.flixr.photosets
 
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.Nullable
@@ -20,6 +21,9 @@ class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
     internal var userId: String? = null
     private val photosetsAdapter = ArrayObjectAdapter(CardPresenter())
     private val photosetsPresenter = PhotosetsPresenter()
+    private val progressDialog by lazy {
+        ProgressDialog(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,5 +66,15 @@ class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
 
     override fun showPhotosets(photosets: List<Photoset>) {
         photosetsAdapter.addAll(0, photosets)
+    }
+
+    override fun showProgress() {
+        progressDialog.setTitle("Please wait")
+        progressDialog.setMessage("Loading photosets...")
+        progressDialog.show()
+    }
+
+    override fun hideProgress() {
+        progressDialog.dismiss()
     }
 }
