@@ -165,6 +165,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
                     val intent = Henson.with(activity)
                             .gotoPhotosActivity()
                             .photosetId(item.id)
+                            .photosetTitle(item.title)
                             .build()
                     startActivity(intent)
                 }

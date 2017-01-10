@@ -4,4 +4,8 @@
     <style name="AppTheme" parent="@style/Theme.Leanback">
         <item name="android:colorControlHighlight">@color/selected_background</item>
     </style>
+
+    <style name="TextStyleHeadline" parent="TextAppearance.AppCompat.Headline" />
+
+    <style name="TextStyleHeader" parent="TextAppearance.Leanback.Header" />
 </resources>

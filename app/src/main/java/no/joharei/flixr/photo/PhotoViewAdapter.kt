@@ -66,7 +66,7 @@ internal class PhotoViewAdapter(private val photos: ArrayList<Photo>) : PagerAda
                             gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                         }
                         setShadowLayer(1.6f, 1.5f, 1.3f, 0x000)
-                        TextViewCompat.setTextAppearance(this, R.style.TextAppearance_Leanback_Header)
+                        TextViewCompat.setTextAppearance(this, R.style.TextStyleHeader)
                         alpha = 0f
                     }
                 }
