@@ -2,6 +2,7 @@ package no.joharei.flixr.mainpage
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +11,7 @@ import android.support.v17.leanback.app.BrowseFragment
 import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
+import android.widget.TextView
 import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -120,6 +122,8 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
 
     private fun setupUIElements() {
         title = getString(R.string.hi_title, CommonPreferences.getUsername(activity))
+        val titleText = titleView.findViewById(R.id.title_text) as TextView
+        titleText.setShadowLayer(5f, 1.5f, 1.3f, Color.BLACK)
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
 
