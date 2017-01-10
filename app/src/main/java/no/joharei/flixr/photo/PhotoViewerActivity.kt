@@ -26,22 +26,20 @@ class PhotoViewerActivity : Activity() {
 
         val adapter = PhotoViewAdapter(photos)
         pager.adapter = adapter
-        pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                fadeOutTitle(position)
-            }
-        })
         if (position >= 0) {
             pager.currentItem = position
-            pager.post { fadeOutTitle(position) }
         }
+        pager.setOnClickListener { toggleTitle(pager.currentItem) }
     }
 
-    private fun fadeOutTitle(position: Int) {
+    private fun toggleTitle(position: Int) {
         val imageTitle = pager.findViewWithTag("imageTitle" + position)
         if (imageTitle != null) {
-            imageTitle.alpha = 1f
-            imageTitle.animate().setStartDelay(2000).alpha(0f).start()
+            if (imageTitle.alpha == 1f) {
+                imageTitle.animate().alpha(0f).start()
+            } else {
+                imageTitle.animate().alpha(1f).start()
+            }
         }
     }
 }
