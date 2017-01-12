@@ -46,13 +46,13 @@ class CardPresenter : Presenter() {
             cardView.titleText = item.title
             cardView.contentText = item.description
             Picasso.with(context)
-                    .load(item.cardImageUrl)
+                    .load(item.thumbnailUrl)
                     .error(mDefaultCardImage)
                     .into(cardView.mainImageView)
         } else if (item is Photo) {
             cardView.titleText = item.title
             Picasso.with(context)
-                    .load(item.cardImageUrl)
+                    .load(item.thumbnailUrl)
                     .error(mDefaultCardImage)
                     .into(cardView.mainImageView)
         } else if (item is Contact) {

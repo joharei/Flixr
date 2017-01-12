@@ -34,7 +34,7 @@ internal class PhotoAdapter(private val context: Context) : RecyclerView.Adapter
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photo = photos[position]
         Picasso.with(context)
-                .load(photo.cardImageUrl)
+                .load(photo.thumbnailUrl)
                 .placeholder(R.color.black_opaque)
                 .error(mDefaultCardImage)
                 .fit()

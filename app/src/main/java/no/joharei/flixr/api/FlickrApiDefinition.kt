@@ -15,13 +15,13 @@ internal interface FlickrApiDefinition {
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getUserDetails(): Observable<User>
 
-    @GET("?method=flickr.photosets.getList")
+    @GET("?method=flickr.photosets.getList&primary_photo_extras=url_n,url_k")
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getPhotosets(
             @Query("user_id") userId: String?
     ): Observable<Photosets>
 
-    @GET("?method=flickr.photosets.getPhotos")
+    @GET("?method=flickr.photosets.getPhotos&extras=url_n,url_k")
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getPhotos(
             @Query("photoset_id") photosetId: Long,

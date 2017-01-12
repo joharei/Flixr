@@ -12,8 +12,6 @@ object Constants {
 
     internal val OAUTH_CALLBACK_URL = "x-oauth://callback/"
 
-    internal val THUMBNAIL_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_n.jpg"
-    internal val FULLSCREEN_URL_FORMAT = "https://farm%d.static.flickr.com/%d/%d_%s_h.jpg"
     internal val BUDDY_ICON_URL_FORMAT = "https://farm%d.staticflickr.com/%d/buddyicons/%s_r.jpg"
     internal val MISSING_BUDDY_ICON_URL = "https://www.flickr.com/images/buddyicon.gif"
 
