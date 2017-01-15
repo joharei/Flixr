@@ -24,15 +24,9 @@ class MainModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(localCredentialStore: LocalCredentialStore): OkHttpClient {
+    fun provideOkHttpClient(consumer: OkHttpOAuthConsumer): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder()
-
         clientBuilder.addInterceptor(FlickrInterceptor())
-
-        val consumer = OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET)
-        val authToken = localCredentialStore.token
-        // TODO: refresh somehow?
-        consumer.setTokenWithSecret(authToken.authToken, authToken.authTokenSecret)
         clientBuilder.addInterceptor(SigningInterceptor(consumer))
 
         val httpLoggingInterceptor = HttpLoggingInterceptor()
@@ -40,5 +34,14 @@ class MainModule {
         clientBuilder.addInterceptor(httpLoggingInterceptor)
 
         return clientBuilder.build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpOAuthConsumer(localCredentialStore: LocalCredentialStore): OkHttpOAuthConsumer {
+        val consumer = OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET)
+        val authToken = localCredentialStore.token
+        consumer.setTokenWithSecret(authToken.authToken, authToken.authTokenSecret)
+        return consumer
     }
 }
