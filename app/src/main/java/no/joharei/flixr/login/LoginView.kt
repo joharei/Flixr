@@ -7,5 +7,7 @@ interface LoginView {
 
     fun showProgress(show: Boolean)
 
+    fun loadUrl(url: String)
+
     fun getUserDetailsCompleted()
 }
