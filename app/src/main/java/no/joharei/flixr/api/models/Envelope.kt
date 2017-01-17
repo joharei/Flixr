@@ -8,7 +8,7 @@ data class Envelope<out T>(
         val code: Int,
         val message: String,
         @SerializedName(value = "data",
-                alternate = arrayOf("photosets", "photoset", "contacts", "user"))
+                alternate = arrayOf("photosets", "photoset", "contacts", "user", "sizes"))
         val data: T
 ) {
     class FailureException(stat: String, code: Int, msg: String) : RuntimeException(

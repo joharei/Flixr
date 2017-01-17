@@ -21,11 +21,14 @@ internal class PhotoViewAdapter(private val photos: ArrayList<Photo>) : PagerAda
         return photos.size
     }
 
-    override fun isViewFromObject(view: View, obj: Any): Boolean {
+    override fun isViewFromObject(view: View?, obj: Any?): Boolean {
         return view === obj
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+    override fun instantiateItem(container: ViewGroup?, position: Int): Any? {
+        if (container == null) {
+            return null
+        }
         val context = container.context
         val photoItemUI = PhotoItemUI()
         val itemLayout = photoItemUI.createView(AnkoContext.create(context, container))
@@ -43,8 +46,8 @@ internal class PhotoViewAdapter(private val photos: ArrayList<Photo>) : PagerAda
         return itemLayout
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        container.removeView(obj as View)
+    override fun destroyItem(container: ViewGroup?, position: Int, obj: Any?) {
+        container?.removeView(obj as View)
     }
 
     internal class PhotoItemUI : AnkoComponent<ViewGroup> {

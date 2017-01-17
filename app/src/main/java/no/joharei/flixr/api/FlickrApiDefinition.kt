@@ -5,6 +5,7 @@ import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
+import no.joharei.flixr.photos.models.Sizes
 import retrofit2.http.GET
 import retrofit2.http.Query
 import rx.Observable
@@ -15,13 +16,19 @@ internal interface FlickrApiDefinition {
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getUserDetails(): Observable<User>
 
+    @GET("?method=flickr.photos.getSizes")
+    @ResponseEnvelopeConverterFactory.WrappedResponse
+    fun getSizes(
+            @Query("photo_id") photoId: Long
+    ): Observable<Sizes>
+
     @GET("?method=flickr.photosets.getList&primary_photo_extras=url_n,url_k")
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getPhotosets(
             @Query("user_id") userId: String?
     ): Observable<Photosets>
 
-    @GET("?method=flickr.photosets.getPhotos&extras=url_n,url_k")
+    @GET("?method=flickr.photosets.getPhotos&extras=url_n")
     @ResponseEnvelopeConverterFactory.WrappedResponse
     fun getPhotos(
             @Query("photoset_id") photosetId: Long,

@@ -4,6 +4,7 @@ import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
+import no.joharei.flixr.photos.models.Sizes
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
@@ -27,6 +28,10 @@ class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String) : FlickrApiConta
 
     override fun getUserDetails(): Observable<User> {
         return api.getUserDetails()
+    }
+
+    override fun getSizes(photoId: Long): Observable<Sizes> {
+        return api.getSizes(photoId)
     }
 
     override fun getPhotosets(userId: String?): Observable<Photosets> {

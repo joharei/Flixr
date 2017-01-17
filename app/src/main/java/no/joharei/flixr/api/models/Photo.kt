@@ -26,7 +26,7 @@ data class Photo(
         @SerializedName("url_n")
         val thumbnailUrl: String,
         @SerializedName("url_k")
-        val fullscreenImageUrl: String
+        var fullscreenImageUrl: String?
 ) : PaperParcelable {
 
     companion object {
