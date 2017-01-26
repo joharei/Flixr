@@ -24,7 +24,9 @@ import no.joharei.flixr.error.BrowseErrorActivity
 import no.joharei.flixr.mainpage.models.Contact
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.utils.Constants
+import no.joharei.flixr.utils.Utils
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.debug
 import java.util.*
 
@@ -202,7 +204,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         override fun onItemSelected(itemViewHolder: Presenter.ViewHolder?, item: Any?,
                                     rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             if (item is Photoset) {
-                mBackgroundURL = item.backgroundImageUrl
+                mBackgroundURL = item.backgroundImageUrl(Utils.getDisplaySize(ctx))
                 startBackgroundTimer()
             }
 

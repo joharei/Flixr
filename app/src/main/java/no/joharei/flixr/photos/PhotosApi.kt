@@ -2,7 +2,6 @@ package no.joharei.flixr.photos
 
 import no.joharei.flixr.api.FlickrApiContainer
 import no.joharei.flixr.api.models.Photos
-import no.joharei.flixr.photos.models.Sizes
 import rx.Observable
 import javax.inject.Inject
 
@@ -11,9 +10,5 @@ class PhotosApi
 internal constructor(private val flickrApiContainer: FlickrApiContainer) {
     internal fun getPhotos(photosetId: Long, userId: String?): Observable<Photos> {
         return flickrApiContainer.getPhotos(photosetId, userId)
-    }
-
-    internal fun getSizes(photoId: Long): Observable<Sizes> {
-        return flickrApiContainer.getSizes(photoId)
     }
 }

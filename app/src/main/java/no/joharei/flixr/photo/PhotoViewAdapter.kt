@@ -1,5 +1,6 @@
 package no.joharei.flixr.photo
 
+import android.content.Context
 import android.support.v4.view.PagerAdapter
 import android.support.v4.widget.TextViewCompat
 import android.view.Gravity
@@ -11,11 +12,13 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.utils.Utils
 import org.jetbrains.anko.*
 import java.util.*
 
 
-internal class PhotoViewAdapter(private val photos: ArrayList<Photo>) : PagerAdapter() {
+internal class PhotoViewAdapter(context: Context, private val photos: ArrayList<Photo>) : PagerAdapter() {
+    val displaySize = Utils.getDisplaySize(context)
 
     override fun getCount(): Int {
         return photos.size
@@ -39,7 +42,7 @@ internal class PhotoViewAdapter(private val photos: ArrayList<Photo>) : PagerAda
         textView.tag = "imageTitle" + position
         textView.text = photo.title
         Picasso.with(context)
-                .load(photo.fullscreenImageUrl)
+                .load(photo.fullscreenImageUrl(displaySize))
                 .into(imageView)
 
         container.addView(itemLayout)

@@ -1,5 +1,6 @@
 package no.joharei.flixr.api.models
 
+import android.graphics.Point
 import com.google.gson.annotations.SerializedName
 
 data class Photoset(
@@ -30,5 +31,5 @@ data class Photoset(
 
     val thumbnailUrl: String get() = extrasEnvelope.thumbnailUrl
 
-    val backgroundImageUrl: String get() = extrasEnvelope.backgroundImageUrl
+    fun backgroundImageUrl(displaySize: Point): String? = extrasEnvelope.backgroundImageUrl(displaySize)
 }

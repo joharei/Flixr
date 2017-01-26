@@ -4,22 +4,21 @@ import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
-import no.joharei.flixr.photos.models.Sizes
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observable
 
-class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String) : FlickrApiContainer {
+class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String, gsonConverterFactory: GsonConverterFactory) : FlickrApiContainer {
 
-    private val api: FlickrApiDefinition = createApiClient(okHttpClient, url)
+    private val api: FlickrApiDefinition = createApiClient(okHttpClient, url, gsonConverterFactory)
 
-    private fun createApiClient(okHttpClient: OkHttpClient, url: String): FlickrApiDefinition {
+    private fun createApiClient(okHttpClient: OkHttpClient, url: String, gsonConverterFactory: GsonConverterFactory): FlickrApiDefinition {
         val retrofit = Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(ResponseEnvelopeConverterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(gsonConverterFactory)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(okHttpClient)
                 .build()
@@ -28,10 +27,6 @@ class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String) : FlickrApiConta
 
     override fun getUserDetails(): Observable<User> {
         return api.getUserDetails()
-    }
-
-    override fun getSizes(photoId: Long): Observable<Sizes> {
-        return api.getSizes(photoId)
     }
 
     override fun getPhotosets(userId: String?): Observable<Photosets> {

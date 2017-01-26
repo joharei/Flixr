@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import no.joharei.flixr.api.models.Photo
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.support.v4.viewPager
 import java.util.*
 
@@ -24,7 +25,7 @@ class PhotoViewerActivity : Activity() {
 
         pager = viewPager()
 
-        val adapter = PhotoViewAdapter(photos)
+        val adapter = PhotoViewAdapter(ctx, photos)
         pager.adapter = adapter
         if (position >= 0) {
             pager.currentItem = position
