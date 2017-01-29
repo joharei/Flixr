@@ -32,7 +32,7 @@ data class PrimaryPhotoExtras(
         if (index >= 0) {
             return urls[index]
         } else {
-            return urls.last()
+            return urls.last { it != null }
         }
     }
 }
