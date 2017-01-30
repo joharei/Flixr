@@ -1,17 +1,17 @@
 package no.joharei.flixr.mainpage
 
+import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class MainPresenter : AnkoLogger {
     @Inject
     lateinit var mainApi: MainApi
     lateinit var view: MainView
-    val compositeSubscription = CompositeSubscription()
+    val compositeSubscription = CompositeDisposable()
 
     fun attachView(view: MainView) {
         this.view = view
@@ -43,6 +43,6 @@ class MainPresenter : AnkoLogger {
     }
 
     fun stop() {
-        compositeSubscription.unsubscribe()
+        compositeSubscription.clear()
     }
 }

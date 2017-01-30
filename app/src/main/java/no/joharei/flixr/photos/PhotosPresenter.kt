@@ -1,18 +1,18 @@
 package no.joharei.flixr.photos
 
+import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class PhotosPresenter : AnkoLogger {
     @Inject
     internal lateinit var photosApi: PhotosApi
     private lateinit var view: PhotosView
-    private val compositeSubscription = CompositeSubscription()
+    private val compositeSubscription = CompositeDisposable()
 
     internal fun attachView(view: PhotosView) {
         this.view = view
@@ -33,6 +33,6 @@ class PhotosPresenter : AnkoLogger {
     }
 
     internal fun stop() {
-        compositeSubscription.unsubscribe()
+        compositeSubscription.clear()
     }
 }

@@ -1,11 +1,11 @@
 package no.joharei.flixr.api
 
 
+import io.reactivex.Observable
 import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
-import rx.Observable
 
 interface FlickrApiContainer {
     fun getUserDetails(): Observable<User>

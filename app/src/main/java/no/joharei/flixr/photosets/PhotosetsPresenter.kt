@@ -1,17 +1,17 @@
 package no.joharei.flixr.photosets
 
+import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class PhotosetsPresenter : AnkoLogger {
     @Inject
     internal lateinit var mainApi: PhotosetsApi
     private lateinit var view: PhotosetsView
-    private val compositeSubscription = CompositeSubscription()
+    private val compositeSubscription = CompositeDisposable()
 
     internal fun attachView(view: PhotosetsView) {
         this.view = view
@@ -20,7 +20,7 @@ class PhotosetsPresenter : AnkoLogger {
 
     internal fun fetchPhotosets(userId: String?) {
         view.showProgress()
-        mainApi.getPhotosets(userId)
+        compositeSubscription.add(mainApi.getPhotosets(userId)
                 .applyDefaultSchedulers()
                 .subscribe(
                         { photosets ->
@@ -30,10 +30,10 @@ class PhotosetsPresenter : AnkoLogger {
                         { throwable ->
                             error("Failed fetching photosets", throwable)
                             // TODO
-                        })
+                        }))
     }
 
     internal fun stop() {
-        compositeSubscription.unsubscribe()
+        compositeSubscription.clear()
     }
 }
