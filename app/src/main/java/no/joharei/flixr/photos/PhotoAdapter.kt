@@ -1,7 +1,8 @@
 package no.joharei.flixr.photos
 
 
-import android.content.Context
+import android.app.Activity
+import android.app.ActivityOptions
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,9 +15,10 @@ import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import java.util.*
 
-internal class PhotoAdapter(private val context: Context) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
-    private val mDefaultCardImage = ContextCompat.getDrawable(context, R.drawable.movie)
+internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
+    private val mDefaultCardImage = ContextCompat.getDrawable(activity, R.drawable.movie)
     private val photos = ArrayList<Photo>()
+    internal var isPhotoActivityStarted = false
 
     fun swap(photos: List<Photo>) {
         this.photos.clear()
@@ -32,29 +34,46 @@ internal class PhotoAdapter(private val context: Context) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val photo = photos[position]
-        Picasso.with(context)
-                .load(photo.thumbnailUrl)
-                .placeholder(R.color.black_opaque)
-                .error(mDefaultCardImage)
-                .fit()
-                .centerCrop()
-                .into(holder.imageView)
-        holder.itemView.setOnClickListener { v ->
-            val intent = Henson.with(context)
-                    .gotoPhotoViewerActivity()
-                    .photos(photos)
-                    .position(position)
-                    .build()
-            context.startActivity(intent)
-        }
+        holder.bind(position)
     }
 
     override fun getItemCount(): Int {
         return photos.size
     }
 
-    internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
+        private var pos = 0
         val imageView = itemView.findViewById(R.id.image) as ImageView
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        fun bind(position: Int) {
+            Picasso.with(activity)
+                    .load(photos[position].thumbnailUrl)
+                    .placeholder(R.color.black_opaque)
+                    .error(mDefaultCardImage)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView)
+            pos = position
+            imageView.transitionName = photos[position].id.toString()
+            imageView.tag = photos[position].id.toString()
+        }
+
+        override fun onClick(v: View?) {
+            val intent = Henson.with(activity)
+                    .gotoPhotoViewerActivity()
+                    .photos(photos)
+                    .startingPosition(pos)
+                    .build()
+            if (!isPhotoActivityStarted) {
+                isPhotoActivityStarted = true
+                activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity,
+                        imageView, imageView.transitionName).toBundle())
+            }
+        }
     }
 }

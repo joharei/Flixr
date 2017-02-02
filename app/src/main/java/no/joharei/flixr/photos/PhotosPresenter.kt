@@ -1,16 +1,19 @@
 package no.joharei.flixr.photos
 
 import no.joharei.flixr.MainApplication
+import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import rx.subscriptions.CompositeSubscription
+import java.util.*
 import javax.inject.Inject
 
 class PhotosPresenter : AnkoLogger {
     @Inject
     internal lateinit var photosApi: PhotosApi
+    internal val photos = ArrayList<Photo>()
     private lateinit var view: PhotosView
     private val compositeSubscription = CompositeSubscription()
 
@@ -26,6 +29,8 @@ class PhotosPresenter : AnkoLogger {
                 .map { it.photos }
                 .subscribe(
                         { photos ->
+                            this.photos.clear()
+                            this.photos.addAll(photos)
                             view.showPhotos(photos)
                         },
                         { throwable -> error("Failed fetching photos", throwable) })
