@@ -1,6 +1,8 @@
 package no.joharei.flixr.login
 
 import android.net.Uri
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.api.LocalCredentialStore
 import no.joharei.flixr.api.models.AuthToken
@@ -13,8 +15,6 @@ import oauth.signpost.OAuthProvider
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.jetbrains.anko.info
-import rx.Observable
-import rx.subscriptions.CompositeSubscription
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
 import javax.inject.Inject
 
@@ -23,10 +23,8 @@ class LoginPresenter : AnkoLogger {
     lateinit var loginApi: LoginApi
     @Inject
     lateinit var oAuthConsumer: OkHttpOAuthConsumer
-    @Inject
-    lateinit var localCredentialStore: LocalCredentialStore
     lateinit var view: LoginView
-    val compositeSubscription = CompositeSubscription()
+    val compositeSubscription = CompositeDisposable()
 
     fun attachView(view: LoginView) {
         this.view = view
@@ -92,6 +90,6 @@ class LoginPresenter : AnkoLogger {
     }
 
     fun stop() {
-        compositeSubscription.unsubscribe()
+        compositeSubscription.clear()
     }
 }

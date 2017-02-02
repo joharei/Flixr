@@ -1,7 +1,7 @@
 package no.joharei.flixr.tools
 
 import android.util.LruCache
-import rx.Observable
+import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Singleton
 

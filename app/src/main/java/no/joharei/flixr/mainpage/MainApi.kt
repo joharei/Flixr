@@ -1,9 +1,9 @@
 package no.joharei.flixr.mainpage
 
+import io.reactivex.Observable
 import no.joharei.flixr.api.FlickrApiContainer
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.mainpage.models.Contacts
-import rx.Observable
 import javax.inject.Inject
 
 class MainApi

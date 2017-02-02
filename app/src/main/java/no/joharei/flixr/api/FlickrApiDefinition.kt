@@ -1,13 +1,13 @@
 package no.joharei.flixr.api
 
 
+import io.reactivex.Observable
 import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
 import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
 import retrofit2.http.GET
 import retrofit2.http.Query
-import rx.Observable
 
 internal interface FlickrApiDefinition {
 
