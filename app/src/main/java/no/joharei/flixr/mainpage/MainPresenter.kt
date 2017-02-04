@@ -25,6 +25,7 @@ class MainPresenter : AnkoLogger {
                         { photosets -> view.showMyPhotosets(photosets.photosets) },
                         { throwable ->
                             error("Failed fetching my photosets", throwable)
+                            mainApi.clearCache()
                             // TODO
                         })
         compositeSubscription.add(photosetsSub)
@@ -37,6 +38,7 @@ class MainPresenter : AnkoLogger {
                         { contacts -> view.showMyContacts(contacts.contacts) },
                         { throwable ->
                             error("Failed fetching my contacts", throwable)
+                            mainApi.clearCache()
                             // TODO
                         })
         compositeSubscription.add(contactsSub)

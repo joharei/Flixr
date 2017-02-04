@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class PhotosetsPresenter : AnkoLogger {
     @Inject
-    internal lateinit var mainApi: PhotosetsApi
+    internal lateinit var photosetsApi: PhotosetsApi
     private lateinit var view: PhotosetsView
     private val compositeSubscription = CompositeDisposable()
 
@@ -20,7 +20,7 @@ class PhotosetsPresenter : AnkoLogger {
 
     internal fun fetchPhotosets(userId: String?) {
         view.showProgress()
-        compositeSubscription.add(mainApi.getPhotosets(userId)
+        compositeSubscription.add(photosetsApi.getPhotosets(userId)
                 .applyDefaultSchedulers()
                 .subscribe(
                         { photosets ->
@@ -29,6 +29,7 @@ class PhotosetsPresenter : AnkoLogger {
                         },
                         { throwable ->
                             error("Failed fetching photosets", throwable)
+                            photosetsApi.clearCache()
                             // TODO
                         }))
     }

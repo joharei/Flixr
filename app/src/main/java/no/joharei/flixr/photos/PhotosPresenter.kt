@@ -33,7 +33,11 @@ class PhotosPresenter : AnkoLogger {
                             this.photos.addAll(photos)
                             view.showPhotos(photos)
                         },
-                        { throwable -> error("Failed fetching photos", throwable) })
+                        { throwable ->
+                            error("Failed fetching photos", throwable)
+                            photosApi.clearCache()
+                            //TODO
+                        })
         compositeSubscription.add(photosSub)
     }
 

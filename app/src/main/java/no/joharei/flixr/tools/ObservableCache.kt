@@ -11,23 +11,29 @@ class ObservableCache
 internal constructor() {
     private val apiObservables = LruCache<String, Observable<*>>(10)
 
-    fun getCachedObservable(unPreparedObservable: Observable<*>, clazz: Class<*>, cacheObservable: Boolean, useCache: Boolean): Observable<*> {
+    fun <T> getCachedObservable(unPreparedObservable: Observable<T>, clazz: Class<T>, cacheObservable: Boolean, useCache: Boolean): Observable<T> {
         return getCachedObservable(unPreparedObservable, clazz, "", cacheObservable, useCache)
     }
 
-    fun getCachedObservable(unPreparedObservable: Observable<*>, clazz: Class<*>, key: String, cacheObservable: Boolean, useCache: Boolean): Observable<*> {
+    fun <T> getCachedObservable(unPreparedObservable: Observable<T>, clazz: Class<T>, key: String, cacheObservable: Boolean, useCache: Boolean): Observable<T> {
+        var preparedObservable: Observable<T>? = null
+
         if (useCache) {
-            return apiObservables.get(clazz.toString() + key)
+            preparedObservable = apiObservables.get(clazz.toString() + key) as? Observable<T>
         }
 
-        var preparedObservable = unPreparedObservable
+        if (preparedObservable != null) {
+            return preparedObservable
+        }
+
+        preparedObservable = unPreparedObservable
 
         if (cacheObservable) {
             preparedObservable = preparedObservable.cache()
             apiObservables.put(clazz.toString() + key, preparedObservable)
         }
 
-        return preparedObservable
+        return preparedObservable!!
     }
 
     fun clearCache() {
