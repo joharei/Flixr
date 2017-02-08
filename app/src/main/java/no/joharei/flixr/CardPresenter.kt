@@ -1,19 +1,27 @@
 package no.joharei.flixr
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v17.leanback.widget.ImageCardView
 import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
+import android.view.ContextThemeWrapper
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.TextView
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.mainpage.models.Contact
+import org.jetbrains.anko.dip
+import org.jetbrains.anko.find
 
-class CardPresenter : Presenter() {
+class CardPresenter(val context: Context) : Presenter() {
     private var sSelectedBackgroundColor: Int = 0
     private var sDefaultBackgroundColor: Int = 0
     private lateinit var mDefaultCardImage: Drawable
+    private lateinit var cardView: ImageCardView
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
         val context = parent.context
@@ -21,14 +29,19 @@ class CardPresenter : Presenter() {
         sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background)
         mDefaultCardImage = ContextCompat.getDrawable(context, R.drawable.movie)
 
-        val cardView = object : ImageCardView(context) {
+        val cardView = object : ImageCardView(ContextThemeWrapper(context, R.style.CustomImageCardTheme)) {
+            val textView = find<TextView>(R.id.title_text)
+
             init {
                 isFocusable = true
                 isFocusableInTouchMode = true
+                setMainImageDimensions(WRAP_CONTENT, dip(100))
             }
 
             override fun setSelected(selected: Boolean) {
                 updateCardBackgroundColor(this, selected)
+                textView.ellipsize = if (selected) TextUtils.TruncateAt.MARQUEE else TextUtils.TruncateAt.END
+                textView.setHorizontallyScrolling(selected)
                 super.setSelected(selected)
             }
         }
@@ -38,33 +51,22 @@ class CardPresenter : Presenter() {
     }
 
     override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
-        val cardView = viewHolder.view as ImageCardView
-
-        cardView.setMainImageDimensions(ViewGroup.LayoutParams.WRAP_CONTENT, 176)
-        val context = viewHolder.view.context
-        if (item is Photoset) {
-            cardView.titleText = item.title
-            cardView.contentText = item.description
-            Picasso.with(context)
-                    .load(item.thumbnailUrl)
-                    .error(mDefaultCardImage)
-                    .into(cardView.mainImageView)
-        } else if (item is Photo) {
-            cardView.titleText = item.title
-            Picasso.with(context)
-                    .load(item.thumbnailUrl)
-                    .error(mDefaultCardImage)
-                    .into(cardView.mainImageView)
-        } else if (item is Contact) {
-            cardView.titleText = if (!item.realName.isEmpty())
-                item.realName
-            else
-                item.userName
-            Picasso.with(context)
-                    .load(item.cardImageUrl)
-                    .error(mDefaultCardImage)
-                    .into(cardView.mainImageView)
+        cardView = viewHolder.view as ImageCardView
+        cardView.titleText = when (item) {
+            is Photoset -> item.title
+            is Photo -> item.title
+            is Contact -> if (!item.realName.isEmpty()) item.realName else item.userName
+            else -> null
         }
+        Picasso.with(context)
+                .load(when (item) {
+                    is Photoset -> item.thumbnailUrl
+                    is Photo -> item.thumbnailUrl
+                    is Contact -> item.cardImageUrl
+                    else -> null
+                })
+                .error(mDefaultCardImage)
+                .into(cardView.mainImageView)
     }
 
     override fun onUnbindViewHolder(viewHolder: Presenter.ViewHolder) {

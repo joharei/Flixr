@@ -57,12 +57,8 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         }
     }
     private val mainPresenter = MainPresenter()
-    private val photosetAdapter by lazy {
-        ArrayObjectAdapter(CardPresenter())
-    }
-    private val contactsAdapter by lazy {
-        ArrayObjectAdapter(CardPresenter())
-    }
+    private val photosetAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
+    private val contactsAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

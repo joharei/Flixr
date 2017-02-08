@@ -13,17 +13,16 @@ import com.f2prateek.dart.InjectExtra
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
 import no.joharei.flixr.api.models.Photoset
+import org.jetbrains.anko.ctx
 
 class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
     @InjectExtra
     @Nullable
     @JvmField
     internal var userId: String? = null
-    private val photosetsAdapter = ArrayObjectAdapter(CardPresenter())
+    private val photosetsAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
     private val photosetsPresenter = PhotosetsPresenter()
-    private val progressDialog by lazy {
-        ProgressDialog(context)
-    }
+    private val progressDialog by lazy { ProgressDialog(ctx) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -8,4 +8,11 @@
     <style name="TextStyleHeadline" parent="TextAppearance.AppCompat.Headline" />
 
     <style name="TextStyleHeader" parent="TextAppearance.Leanback.Header" />
+
+    <style name="CustomImageCardViewStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="cardBackground">@color/default_background</item>
+        <item name="infoAreaBackground">@color/default_background</item>
+        <item name="lbImageCardViewType">Title</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
 </resources>

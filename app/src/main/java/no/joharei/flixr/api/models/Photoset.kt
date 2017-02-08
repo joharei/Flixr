@@ -12,9 +12,9 @@ data class Photoset(
         val photos: Int,
         val videos: String,
         @SerializedName("title")
-        val titleEnvelope: Title,
+        private val titleEnvelope: Title,
         @SerializedName("description")
-        val descriptionEnvelope: Description,
+        private val descriptionEnvelope: Description,
         val needsInterstitial: Int,
         val visibilityCanSeeSet: Int,
         val countViews: String,
