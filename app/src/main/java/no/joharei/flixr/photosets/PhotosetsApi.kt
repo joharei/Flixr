@@ -10,7 +10,7 @@ class PhotosetsApi
 @Inject
 internal constructor(private val flickrApiContainer: FlickrApiContainer, private val observableCache: ObservableCache) {
     internal fun getPhotosets(userId: String?): Observable<Photosets> {
-        return observableCache.getCachedObservable(flickrApiContainer.getPhotosets(userId), Photosets::class.java, "photosets", true, true)
+        return observableCache.getCachedObservable(flickrApiContainer.getPhotosets(userId), Photosets::class.java, "photosets:$userId", true, true)
     }
 
     internal fun clearCache() = observableCache.clearCache()
