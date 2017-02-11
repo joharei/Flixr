@@ -49,7 +49,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin & Anko
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.anko:anko-sdk21:$ankoVersion"
     compile "org.jetbrains.anko:anko-appcompat-v7:$ankoVersion"
     compile "org.jetbrains.anko:anko-recyclerview-v7:$ankoVersion"

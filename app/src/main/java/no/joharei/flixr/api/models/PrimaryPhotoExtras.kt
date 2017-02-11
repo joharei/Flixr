@@ -27,7 +27,7 @@ data class PrimaryPhotoExtras(
 ) {
     fun backgroundImageUrl(displaySize: Point): String? {
         val sizes = arrayOf(widthZ, widthC, widthB, widthH, widthK, widthO) zip arrayOf(heightZ, heightC, heightB, heightH, heightK, heightO)
-        val index = sizes.indexOfFirst { (it.first != null && it.second != null) && (it.first > displaySize.x || it.second > displaySize.y) }
+        val index = sizes.indexOfFirst { (it.first != null && it.second != null) && (it.first as Int > displaySize.x || it.second as Int > displaySize.y) }
         val urls = arrayOf(urlZ, urlC, urlB, urlH, urlK, urlO)
         if (index >= 0) {
             return urls[index]
