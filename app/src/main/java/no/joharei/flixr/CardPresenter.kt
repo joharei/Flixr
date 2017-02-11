@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import com.squareup.picasso.Picasso
-import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.mainpage.models.Contact
 import org.jetbrains.anko.dip
@@ -54,14 +53,12 @@ class CardPresenter(val context: Context) : Presenter() {
         cardView = viewHolder.view as ImageCardView
         cardView.titleText = when (item) {
             is Photoset -> item.title
-            is Photo -> item.title
             is Contact -> item.displayName
             else -> null
         }
         Picasso.with(context)
                 .load(when (item) {
                     is Photoset -> item.thumbnailUrl
-                    is Photo -> item.thumbnailUrl
                     is Contact -> item.cardImageUrl
                     else -> null
                 })
