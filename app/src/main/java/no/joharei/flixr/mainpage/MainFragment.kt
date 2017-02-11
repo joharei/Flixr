@@ -164,23 +164,18 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
                                    rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             when (item) {
                 is Photoset -> {
-                    val intent = Henson.with(activity)
+                    startActivity(Henson.with(activity)
                             .gotoPhotosActivity()
                             .photosetId(item.id)
                             .photosetTitle(item.title)
-                            .build()
-                    startActivity(intent)
+                            .build())
                 }
                 is Contact -> {
-                    val intent = Henson.with(activity)
+                    startActivity(Henson.with(activity)
                             .gotoPhotosetsActivity()
-                            .build()
-                    val extras = Henson.with(activity)
-                            .gotoPhotosetsFragment()
                             .userId(item.nsid)
-                            .build()
-                    intent.putExtras(extras)
-                    startActivity(intent)
+                            .userName(item.displayName)
+                            .build())
                 }
                 is String -> {
                     if (getString(R.string.error_fragment) in item) {

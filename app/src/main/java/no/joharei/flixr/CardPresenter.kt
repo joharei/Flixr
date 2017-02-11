@@ -55,7 +55,7 @@ class CardPresenter(val context: Context) : Presenter() {
         cardView.titleText = when (item) {
             is Photoset -> item.title
             is Photo -> item.title
-            is Contact -> if (!item.realName.isEmpty()) item.realName else item.userName
+            is Contact -> item.displayName
             else -> null
         }
         Picasso.with(context)

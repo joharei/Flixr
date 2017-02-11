@@ -2,6 +2,7 @@ package no.joharei.flixr.api.models
 
 import android.graphics.Point
 import com.google.gson.annotations.SerializedName
+import no.joharei.flixr.common.adapters.PhotoItem
 
 data class Photoset(
         val id: Long,
@@ -24,7 +25,7 @@ data class Photoset(
         val dateUpdate: String,
         @SerializedName("primary_photo_extras")
         val extrasEnvelope: PrimaryPhotoExtras
-) {
+) : PhotoItem() {
     val title: String get() = titleEnvelope.content
 
     val description: String get() = descriptionEnvelope.content

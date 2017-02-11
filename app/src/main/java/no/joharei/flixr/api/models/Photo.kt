@@ -2,6 +2,7 @@ package no.joharei.flixr.api.models
 
 import android.graphics.Point
 import com.google.gson.annotations.SerializedName
+import no.joharei.flixr.common.adapters.PhotoItem
 import nz.bradcampbell.paperparcel.PaperParcel
 import nz.bradcampbell.paperparcel.PaperParcelable
 
@@ -44,7 +45,7 @@ data class Photo(
         val urlH: String?,
         val urlK: String?,
         val urlO: String?
-) : PaperParcelable {
+) : PhotoItem(), PaperParcelable {
 
     fun fullscreenImageUrl(displaySize: Point): String? {
         val sizes = arrayOf(widthZ, widthC, widthB, widthH, widthK, widthO) zip arrayOf(heightZ, heightC, heightB, heightH, heightK, heightO)

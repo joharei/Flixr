@@ -7,7 +7,7 @@ import java.util.*
 data class Contact(
         val nsid: String,
         @SerializedName("username")
-        val userName: String,
+        private val userName: String,
         @SerializedName("iconserver")
         val iconServer: Int,
         @SerializedName("iconfarm")
@@ -15,7 +15,7 @@ data class Contact(
         val ignored: Int,
         val revIgnored: Int,
         @SerializedName("realname")
-        val realName: String,
+        private val realName: String,
         val friend: Int,
         val family: Int,
         val pathAlias: String?,
@@ -34,4 +34,6 @@ data class Contact(
                 return Constants.MISSING_BUDDY_ICON_URL
             }
         }
+
+    val displayName get() = if (!realName.isEmpty()) realName else userName
 }

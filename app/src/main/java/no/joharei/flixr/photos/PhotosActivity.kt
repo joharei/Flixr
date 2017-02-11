@@ -18,6 +18,7 @@ import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.common.adapters.PhotoAdapter
 import no.joharei.flixr.decorations.SpacesItemDecoration
 import no.joharei.flixr.utils.Utils
 import org.jetbrains.anko.*
