@@ -58,7 +58,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:leanback-v17:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
 
     // Dagger
     compile "com.google.dagger:dagger:$daggerVersion"
