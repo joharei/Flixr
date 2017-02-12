@@ -62,6 +62,7 @@ class CardPresenter(val context: Context) : Presenter() {
                     is Contact -> item.cardImageUrl
                     else -> null
                 })
+                .placeholder(R.color.black_opaque)
                 .error(mDefaultCardImage)
                 .into(cardView.mainImageView)
     }

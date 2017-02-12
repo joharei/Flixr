@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
@@ -19,18 +20,9 @@ import org.jetbrains.anko.*
 import java.util.*
 
 
-internal class PhotoViewAdapter(activity: Activity, private val photos: ArrayList<Photo>, private val positionInAlbum: Int) : PagerAdapter() {
+internal class PhotoViewAdapter(private val activity: Activity, private val photos: ArrayList<Photo>, private val positionInAlbum: Int) : PagerAdapter() {
     val displaySize = Utils.getDisplaySize(activity)
     var currentItem: View? = null
-    private val imageCallback = object : Callback {
-        override fun onSuccess() {
-            activity.startPostponedEnterTransition()
-        }
-
-        override fun onError() {
-            activity.startPostponedEnterTransition()
-        }
-    }
 
     override fun getCount(): Int {
         return photos.size
@@ -54,12 +46,42 @@ internal class PhotoViewAdapter(activity: Activity, private val photos: ArrayLis
         val textView = itemLayout.find<TextView>(PhotoItemUI.TEXT_ID)
         textView.tag = "imageTitle" + position
         textView.text = photo.title
-        val imageRequest = Picasso.with(context)
-                .load(photo.fullscreenImageUrl(displaySize))
-        if (position == positionInAlbum) {
-            imageRequest.noFade()
-        }
-        imageRequest.into(imageView, imageCallback)
+
+        val fullscreenImageUrl = photo.fullscreenImageUrl(displaySize)
+        // Try to load fullscreen image from cache
+        Picasso.with(context)
+                .load(fullscreenImageUrl)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(imageView, object : Callback {
+                    override fun onSuccess() {
+                        activity.startPostponedEnterTransition()
+                    }
+
+                    override fun onError() {
+                        // If there was no cache, load the thumbnail first...
+                        val imageRequest = Picasso.with(context)
+                                .load(photo.thumbnailUrl)
+                        if (position == positionInAlbum) {
+                            imageRequest.noFade()
+                        }
+                        val fullScreenRequest = Picasso.with(context)
+                                .load(fullscreenImageUrl)
+                                .noPlaceholder()
+                        imageRequest.into(imageView, object : Callback {
+                            override fun onSuccess() {
+                                activity.startPostponedEnterTransition()
+                                // ... and whether loading the thumbnail was successful or not,
+                                // load the full screen image
+                                fullScreenRequest.into(imageView)
+                            }
+
+                            override fun onError() {
+                                activity.startPostponedEnterTransition()
+                                fullScreenRequest.into(imageView)
+                            }
+                        })
+                    }
+                })
 
         container.addView(itemLayout)
         return itemLayout

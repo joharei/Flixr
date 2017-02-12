@@ -35,7 +35,7 @@ class PhotoViewerActivity : Activity() {
                     // removing the shared element from the shared elements map.
                     names.clear()
                     sharedElements.clear()
-                } else if (startingPosition !== currentPosition) {
+                } else if (startingPosition != currentPosition) {
                     // If the user has swiped to a different ViewPager page, then we need to
                     // remove the old shared element and replace it with the new shared element
                     // that should be transitioned instead.

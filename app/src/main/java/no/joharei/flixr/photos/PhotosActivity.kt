@@ -20,7 +20,6 @@ import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.adapters.PhotoAdapter
 import no.joharei.flixr.decorations.SpacesItemDecoration
-import no.joharei.flixr.utils.Utils
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -93,7 +92,7 @@ class PhotosActivity : Activity(), PhotosView {
             }
             recyclerView = recyclerView {
                 layoutManager = GridLayoutManager(ctx, 6)
-                addItemDecoration(SpacesItemDecoration(Utils.convertDpToPixel(ctx, 4)))
+                addItemDecoration(SpacesItemDecoration(dip(4)))
                 adapter = photoAdapter
             }.lparams(wrapContent, matchParent) {
                 gravity = Gravity.CENTER_HORIZONTAL
@@ -118,7 +117,7 @@ class PhotosActivity : Activity(), PhotosView {
         val currentPosition = tmpReenterState?.getInt(EXTRA_CURRENT_ALBUM_POSITION)
         if (currentPosition != null && startingPosition != currentPosition) {
             recyclerView.scrollToPosition(currentPosition)
-            recyclerView.getChildAt(currentPosition).requestFocus()
+            recyclerView.getChildAt(currentPosition)?.requestFocus()
         }
         postponeEnterTransition()
         recyclerView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
