@@ -9,6 +9,8 @@
 
     <style name="TextStyleHeader" parent="TextAppearance.Leanback.Header" />
 
+    <style name="TextStyleThumbnailTitle" parent="TextAppearance.Leanback.ImageCardView.Title" />
+
     <style name="CustomImageCardViewStyle" parent="Widget.Leanback.ImageCardViewStyle">
         <item name="cardBackground">@color/default_background</item>
         <item name="infoAreaBackground">@color/default_background</item>
