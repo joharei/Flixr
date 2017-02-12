@@ -1,6 +1,7 @@
 package no.joharei.flixr.photo
 
 import android.app.Activity
+import android.graphics.Color
 import android.support.v4.view.PagerAdapter
 import android.support.v4.widget.TextViewCompat
 import android.view.Gravity
@@ -48,9 +49,9 @@ internal class PhotoViewAdapter(activity: Activity, private val photos: ArrayLis
         val itemLayout = photoItemUI.createView(AnkoContext.create(context, container))
 
         val photo = photos[position]
-        val imageView = itemLayout.findViewById(PhotoItemUI.IMAGE_ID) as ImageView
+        val imageView = itemLayout.find<ImageView>(PhotoItemUI.IMAGE_ID)
         imageView.transitionName = photo.id.toString()
-        val textView = itemLayout.findViewById(PhotoItemUI.TEXT_ID) as TextView
+        val textView = itemLayout.find<TextView>(PhotoItemUI.TEXT_ID)
         textView.tag = "imageTitle" + position
         textView.text = photo.title
         val imageRequest = Picasso.with(context)
@@ -90,11 +91,11 @@ internal class PhotoViewAdapter(activity: Activity, private val photos: ArrayLis
                     textView {
                         id = TEXT_ID
                         lparams(width = wrapContent, height = wrapContent) {
-                            horizontalMargin = dimen(R.dimen.activity_horizontal_margin)
                             bottomMargin = dimen(R.dimen.activity_vertical_margin)
                             gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                         }
-                        setShadowLayer(1.6f, 1.5f, 1.3f, 0x000)
+                        horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
+                        setShadowLayer(1.6f, 1.5f, 1.3f, Color.BLACK)
                         TextViewCompat.setTextAppearance(this, R.style.TextStyleHeader)
                         alpha = 0f
                     }
