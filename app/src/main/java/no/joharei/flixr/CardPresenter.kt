@@ -1,7 +1,6 @@
 package no.joharei.flixr
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.support.v17.leanback.widget.ImageCardView
 import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
@@ -13,20 +12,19 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.mainpage.models.Contact
-import org.jetbrains.anko.dip
+import org.jetbrains.anko.dimen
 import org.jetbrains.anko.find
 
 class CardPresenter(val context: Context) : Presenter() {
     private var sSelectedBackgroundColor: Int = 0
     private var sDefaultBackgroundColor: Int = 0
-    private lateinit var mDefaultCardImage: Drawable
     private lateinit var cardView: ImageCardView
+    private val imageHeight: Int by lazy { context.dimen(R.dimen.default_photo_height) }
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
         val context = parent.context
         sDefaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background)
         sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background)
-        mDefaultCardImage = ContextCompat.getDrawable(context, R.drawable.movie)
 
         val cardView = object : ImageCardView(ContextThemeWrapper(context, R.style.CustomImageCardTheme)) {
             val textView = find<TextView>(R.id.title_text)
@@ -34,7 +32,7 @@ class CardPresenter(val context: Context) : Presenter() {
             init {
                 isFocusable = true
                 isFocusableInTouchMode = true
-                setMainImageDimensions(WRAP_CONTENT, dip(100))
+                setMainImageDimensions(WRAP_CONTENT, imageHeight)
             }
 
             override fun setSelected(selected: Boolean) {
@@ -56,6 +54,13 @@ class CardPresenter(val context: Context) : Presenter() {
             is Contact -> item.displayName
             else -> null
         }
+        when (item) {
+            is Photoset -> scaleWidth(item.thumbnailHeight, item.thumbnailWidth, imageHeight)
+            is Contact -> scaleWidth(item.thumbnailDim, item.thumbnailDim, imageHeight)
+            else -> null
+        }?.let {
+            cardView.setMainImageDimensions(it, imageHeight)
+        }
         Picasso.with(context)
                 .load(when (item) {
                     is Photoset -> item.thumbnailUrl
@@ -63,9 +68,12 @@ class CardPresenter(val context: Context) : Presenter() {
                     else -> null
                 })
                 .placeholder(R.color.black_opaque)
-                .error(mDefaultCardImage)
+                .error(R.drawable.ic_error)
                 .into(cardView.mainImageView)
     }
+
+    private fun scaleWidth(originalHeight: Int, originalWidth: Int, newHeight: Int) =
+            newHeight * originalWidth / originalHeight
 
     override fun onUnbindViewHolder(viewHolder: Presenter.ViewHolder) {
         val cardView = viewHolder.view as ImageCardView

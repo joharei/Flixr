@@ -30,7 +30,11 @@ data class Photoset(
 
     val description: String get() = descriptionEnvelope.content
 
-    val thumbnailUrl: String get() = extrasEnvelope.thumbnailUrl
+    val thumbnailHeight get() = extrasEnvelope.heightN ?: 0
 
-    fun backgroundImageUrl(displaySize: Point): String? = extrasEnvelope.backgroundImageUrl(displaySize)
+    val thumbnailWidth get() = extrasEnvelope.widthN ?: 0
+
+    val thumbnailUrl get() = extrasEnvelope.thumbnailUrl
+
+    fun backgroundImageUrl(displaySize: Point) = extrasEnvelope.backgroundImageUrl(displaySize)
 }

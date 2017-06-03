@@ -6,12 +6,14 @@ import com.google.gson.annotations.SerializedName
 data class PrimaryPhotoExtras(
         @SerializedName("url_n")
         val thumbnailUrl: String,
+        val widthN: Int?,
         val widthZ: Int?,
         val widthC: Int?,
         val widthB: Int?,
         val widthH: Int?,
         val widthK: Int?,
         val widthO: Int?,
+        val heightN: Int?,
         val heightZ: Int?,
         val heightC: Int?,
         val heightB: Int?,

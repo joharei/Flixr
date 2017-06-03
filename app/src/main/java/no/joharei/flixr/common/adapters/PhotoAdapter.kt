@@ -3,7 +3,6 @@ package no.joharei.flixr.common.adapters
 
 import android.app.Activity
 import android.app.ActivityOptions
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity.BOTTOM
 import android.view.View
@@ -24,7 +23,6 @@ import java.util.*
 internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(), AnkoLogger {
     private val PHOTO_TYPE = 0
     private val PHOTOSET_TYPE = 1
-    private val mDefaultCardImage = ContextCompat.getDrawable(activity, R.drawable.movie)
     private val photos = ArrayList<PhotoItem>()
     internal var isPhotoActivityStarted = false
     internal var userId: String? = null
@@ -88,7 +86,7 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
             Picasso.with(activity)
                     .load(thumbnailUrl)
                     .placeholder(R.color.black_opaque)
-                    .error(mDefaultCardImage)
+                    .error(R.drawable.ic_error)
                     .fit()
                     .centerCrop()
                     .into(imageView)
