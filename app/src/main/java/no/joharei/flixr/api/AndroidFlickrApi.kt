@@ -1,6 +1,5 @@
 package no.joharei.flixr.api
 
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import io.reactivex.Observable
 import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
@@ -8,6 +7,7 @@ import no.joharei.flixr.login.models.User
 import no.joharei.flixr.mainpage.models.Contacts
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String, gsonConverterFactory: GsonConverterFactory) : FlickrApiContainer {

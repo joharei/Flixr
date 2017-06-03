@@ -96,7 +96,7 @@ internal class PhotoViewAdapter(private val activity: Activity, private val phot
         currentItem = `object` as View?
     }
 
-    internal class PhotoItemUI : AnkoComponent<ViewGroup> {
+    class PhotoItemUI : AnkoComponent<ViewGroup> {
         companion object {
             val IMAGE_ID = generateViewId()
             val TEXT_ID = generateViewId()
@@ -107,19 +107,17 @@ internal class PhotoViewAdapter(private val activity: Activity, private val phot
                 frameLayout {
                     imageView {
                         id = IMAGE_ID
-                        lparams(width = matchParent, height = matchParent)
                         scaleType = ImageView.ScaleType.FIT_CENTER
-                    }
+                    }.lparams(width = matchParent, height = matchParent)
                     textView {
                         id = TEXT_ID
-                        lparams(width = wrapContent, height = wrapContent) {
-                            bottomMargin = dimen(R.dimen.activity_vertical_margin)
-                            gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                        }
                         horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
                         setShadowLayer(1.6f, 1.5f, 1.3f, Color.BLACK)
                         TextViewCompat.setTextAppearance(this, R.style.TextStyleHeader)
                         alpha = 0f
+                    }.lparams(width = wrapContent, height = wrapContent) {
+                        bottomMargin = dimen(R.dimen.activity_vertical_margin)
+                        gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                     }
                 }
             }
