@@ -1,10 +1,11 @@
 package no.joharei.flixr.api.models
 
 import android.graphics.Point
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import no.joharei.flixr.common.adapters.PhotoItem
-import nz.bradcampbell.paperparcel.PaperParcel
-import nz.bradcampbell.paperparcel.PaperParcelable
+import paperparcel.PaperParcel
 
 @PaperParcel
 data class Photo(
@@ -45,7 +46,12 @@ data class Photo(
         val urlH: String?,
         val urlK: String?,
         val urlO: String?
-) : PhotoItem(), PaperParcelable {
+) : PhotoItem(), Parcelable {
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        dest?.let { PaperParcelPhoto.writeToParcel(this, it, flags) }
+    }
+
+    override fun describeContents() = 0
 
     fun fullscreenImageUrl(displaySize: Point): String? {
         val sizes = arrayOf(widthZ, widthC, widthB, widthH, widthK, widthO) zip arrayOf(heightZ, heightC, heightB, heightH, heightK, heightO)
@@ -59,6 +65,6 @@ data class Photo(
     }
 
     companion object {
-        @JvmField val CREATOR = PaperParcelable.Creator(Photo::class.java)
+        @JvmField val CREATOR = PaperParcelPhoto.CREATOR
     }
 }

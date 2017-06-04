@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 25
@@ -41,7 +42,7 @@ ext {
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
     dartVersion = '2.0.2'
-    paperParcelVersion = '1.0.1'
+    paperParcelVersion = '2.0.1'
 }
 
 dependencies {
@@ -86,11 +87,7 @@ dependencies {
     kapt "com.f2prateek.dart:henson-processor:$dartVersion"
 
     // PaperParcel
-    implementation "com.github.grandstaish.paperparcel:paperparcel:$paperParcelVersion"
-    implementation "com.github.grandstaish.paperparcel:paperparcel-kotlin:$paperParcelVersion"
-    kapt "com.github.grandstaish.paperparcel:compiler:$paperParcelVersion"
-}
-
-kapt {
-    generateStubs = true
+    implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
+    implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion"
+    kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
 }
