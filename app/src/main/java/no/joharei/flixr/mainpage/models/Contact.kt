@@ -35,7 +35,7 @@ data class Contact(
             }
         }
 
-    val displayName = if (!realName.isEmpty()) realName else userName
+    val displayName get() = if (!realName.isEmpty()) realName else userName
 
     val thumbnailDim get() = 300
 }
