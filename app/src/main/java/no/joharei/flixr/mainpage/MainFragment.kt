@@ -132,7 +132,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     }
 
     private fun setupEventListeners() {
-        setOnSearchClickedListener { view ->
+        setOnSearchClickedListener { _ ->
             Toast.makeText(activity, "Implement your own in-app search", Toast.LENGTH_LONG)
                     .show()
         }
