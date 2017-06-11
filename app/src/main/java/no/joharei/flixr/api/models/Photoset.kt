@@ -25,16 +25,16 @@ data class Photoset(
         val dateUpdate: String,
         @SerializedName("primary_photo_extras")
         val extrasEnvelope: PrimaryPhotoExtras
-) : PhotoItem() {
+) : PhotoItem {
     val title: String get() = titleEnvelope.content
 
     val description: String get() = descriptionEnvelope.content
 
-    val thumbnailHeight get() = extrasEnvelope.heightN ?: 0
+    override val thumbnailHeight get() = extrasEnvelope.heightN ?: 0
 
-    val thumbnailWidth get() = extrasEnvelope.widthN ?: 0
+    override val thumbnailWidth get() = extrasEnvelope.widthN ?: 0
 
-    val thumbnailUrl get() = extrasEnvelope.thumbnailUrl
+    override val thumbnailUrl get() = extrasEnvelope.thumbnailUrl
 
     fun backgroundImageUrl(displaySize: Point) = extrasEnvelope.backgroundImageUrl(displaySize)
 }

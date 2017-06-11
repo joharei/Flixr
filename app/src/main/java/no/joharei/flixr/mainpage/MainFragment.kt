@@ -114,8 +114,10 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     }
 
     private fun prepareBackgroundManager() {
-        mBackgroundManager.attach(activity.window)
-        activity.windowManager.defaultDisplay.getMetrics(mMetrics)
+        if (!mBackgroundManager.isAttached) {
+            mBackgroundManager.attach(activity.window)
+            activity.windowManager.defaultDisplay.getMetrics(mMetrics)
+        }
     }
 
     private fun setupUIElements() {

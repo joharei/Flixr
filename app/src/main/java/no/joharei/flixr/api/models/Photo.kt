@@ -22,31 +22,32 @@ data class Photo(
         val isFriend: Int,
         @SerializedName("isfamily")
         val isFamily: Int,
-        @SerializedName("width_n")
-        val thumbnailWidth: Int,
-        @SerializedName("height_n")
-        val thumbnailHeight: Int,
-        @SerializedName("url_n")
-        val thumbnailUrl: String,
+        val widthN: Int,
         val widthZ: Int?,
         val widthC: Int?,
         val widthB: Int?,
         val widthH: Int?,
         val widthK: Int?,
         val widthO: Int?,
+        val heightN: Int,
         val heightZ: Int?,
         val heightC: Int?,
         val heightB: Int?,
         val heightH: Int?,
         val heightK: Int?,
         val heightO: Int?,
+        val urlN: String,
         val urlZ: String?,
         val urlC: String?,
         val urlB: String?,
         val urlH: String?,
         val urlK: String?,
         val urlO: String?
-) : PhotoItem(), Parcelable {
+) : PhotoItem, Parcelable {
+    override val thumbnailUrl: String get() = urlN
+    override val thumbnailWidth: Int get() = widthN
+    override val thumbnailHeight: Int get() = heightN
+
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.let { PaperParcelPhoto.writeToParcel(this, it, flags) }
     }

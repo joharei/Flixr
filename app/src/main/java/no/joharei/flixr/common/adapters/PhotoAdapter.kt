@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.TextView
+import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
@@ -20,17 +21,27 @@ import no.joharei.flixr.utils.selectableItemBackground
 import org.jetbrains.anko.*
 import java.util.*
 
-internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(), AnkoLogger {
+internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(), GreedoLayoutSizeCalculator.SizeCalculatorDelegate, AnkoLogger {
     private val PHOTO_TYPE = 0
+
     private val PHOTOSET_TYPE = 1
     private val photos = ArrayList<PhotoItem>()
+    internal lateinit var sizeCalculator: GreedoLayoutSizeCalculator
     internal var isPhotoActivityStarted = false
     internal var userId: String? = null
+
 
     fun swap(photos: List<PhotoItem>) {
         this.photos.clear()
         this.photos.addAll(photos)
         notifyDataSetChanged()
+    }
+
+    override fun aspectRatioForIndex(index: Int): Double {
+        if (index >= itemCount) {
+            return 1.0
+        }
+        return photos[index].thumbnailWidth.toDouble() / photos[index].thumbnailHeight
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -51,7 +62,6 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
     }
 
     internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        private var thumbnailUrl: String? = null
         private var pos = 0
         val imageView = itemView.find<ImageView>(PhotoItemUI.IMAGE_ID)
         val selectionView = itemView.find<View>(PhotoItemUI.SELECTION_VIEW_ID).apply {
@@ -73,22 +83,25 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
             val photo = photos[position]
             when (photo) {
                 is Photoset -> {
-                    thumbnailUrl = photo.thumbnailUrl
                     textView.text = photo.title
                 }
                 is Photo -> {
-                    thumbnailUrl = photo.thumbnailUrl
                     imageView.transitionName = photo.id.toString()
                     imageView.tag = photo.id.toString()
                 }
-                else -> thumbnailUrl = null
             }
+            val size = sizeCalculator.sizeForChildAtPosition(position)
+            for (view in arrayOf(imageView, selectionView)) {
+                view.layoutParams.apply {
+                    width = size.width
+                    height = size.height
+                }
+            }
+            textView.layoutParams.width = size.width
             Picasso.with(activity)
-                    .load(thumbnailUrl)
+                    .load(photo.thumbnailUrl)
                     .placeholder(R.color.black_opaque)
                     .error(R.drawable.ic_error)
-                    .fit()
-                    .centerCrop()
                     .into(imageView)
             pos = position
         }
@@ -129,18 +142,18 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
         override fun createView(ui: AnkoContext<ViewGroup>): View {
             return with(ui) {
                 frameLayout {
-                    lparams(width = wrapContent, height = wrapContent)
                     imageView {
                         id = IMAGE_ID
-                    }.lparams(width = dip(135), height = dip(100))
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                    }
                     view {
                         id = SELECTION_VIEW_ID
                         background = selectableItemBackground
-                    }.lparams(width = dip(135), height = dip(100))
+                    }
                     viewStub {
                         id = TEXT_STUB_ID
                         layoutResource = R.layout.thumbnail_text
-                    }.lparams(width = dip(135), height = wrapContent, gravity = BOTTOM)
+                    }.lparams(height = wrapContent, gravity = BOTTOM)
                 }
             }
         }

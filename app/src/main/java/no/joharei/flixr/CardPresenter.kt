@@ -19,7 +19,7 @@ class CardPresenter(val context: Context) : Presenter() {
     private var sSelectedBackgroundColor: Int = 0
     private var sDefaultBackgroundColor: Int = 0
     private lateinit var cardView: ImageCardView
-    private val imageHeight: Int by lazy { context.dimen(R.dimen.default_photo_height) }
+    private val imageHeight: Int by lazy { context.dimen(R.dimen.photo_card_height) }
 
     override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
         val context = parent.context

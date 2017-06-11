@@ -90,4 +90,6 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel:$paperParcelVersion"
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion"
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
+
+    implementation 'com.github.500px:greedo-layout-for-android:v1.1.0'
 }

@@ -7,19 +7,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.Nullable
 import android.support.v4.widget.TextViewCompat
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
+import com.fivehundredpx.greedolayout.GreedoLayoutManager
+import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.adapters.PhotoAdapter
-import no.joharei.flixr.decorations.SpacesItemDecoration
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -82,21 +80,22 @@ class PhotosActivity : Activity(), PhotosView {
         super.onCreate(savedInstanceState)
         Dart.inject(this)
 
-        linearLayout {
-            orientation = LinearLayout.VERTICAL
+        verticalLayout {
+            horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
             titleText = textView {
                 TextViewCompat.setTextAppearance(this, R.style.TextStyleHeadline)
-                horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
                 verticalPadding = dimen(R.dimen.activity_vertical_margin)
                 text = photosetTitle
             }
             recyclerView = recyclerView {
-                layoutManager = GridLayoutManager(ctx, 6)
-                addItemDecoration(SpacesItemDecoration(dip(4)))
+                layoutManager = GreedoLayoutManager(photoAdapter).apply {
+                    setMaxRowHeight(dimen(R.dimen.max_thumbnail_height))
+                    photoAdapter.sizeCalculator = sizeCalculator
+                }
                 adapter = photoAdapter
-            }.lparams(wrapContent, matchParent) {
-                gravity = Gravity.CENTER_HORIZONTAL
-            }
+                addItemDecoration(GreedoSpacingItemDecoration(dimen(R.dimen.photos_spacing)))
+                isVerticalScrollBarEnabled = true
+            }.lparams(matchParent, matchParent)
         }
         setExitSharedElementCallback(callback)
 
