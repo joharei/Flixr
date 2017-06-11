@@ -15,13 +15,13 @@ import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
-import no.joharei.flixr.utils.Utils
+import no.joharei.flixr.utils.getDisplaySize
 import org.jetbrains.anko.*
 import java.util.*
 
 
 internal class PhotoViewAdapter(private val activity: Activity, private val photos: ArrayList<Photo>, private val positionInAlbum: Int) : PagerAdapter() {
-    val displaySize = Utils.getDisplaySize(activity)
+    val displaySize = getDisplaySize(activity)
     var currentItem: View? = null
 
     override fun getCount(): Int {
@@ -60,7 +60,7 @@ internal class PhotoViewAdapter(private val activity: Activity, private val phot
                     override fun onError() {
                         // If there was no cache, load the thumbnail first...
                         val imageRequest = Picasso.with(context)
-                                .load(photo.thumbnailUrl)
+                                .load(photo.thumbnailUrl(320, 320))
                         if (position == positionInAlbum) {
                             imageRequest.noFade()
                         }

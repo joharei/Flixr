@@ -63,7 +63,7 @@ class CardPresenter(val context: Context) : Presenter() {
         }
         Picasso.with(context)
                 .load(when (item) {
-                    is Photoset -> item.thumbnailUrl
+                    is Photoset -> item.thumbnailUrl(Int.MAX_VALUE, context.dimen(R.dimen.photo_card_height))
                     is Contact -> item.cardImageUrl
                     else -> null
                 })

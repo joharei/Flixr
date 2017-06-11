@@ -5,6 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import no.joharei.flixr.common.adapters.PhotoItem
+import no.joharei.flixr.utils.getUrlOfSmallestPhotoToFillSize
 import paperparcel.PaperParcel
 
 @PaperParcel
@@ -36,7 +37,7 @@ data class Photo(
         val heightH: Int?,
         val heightK: Int?,
         val heightO: Int?,
-        val urlN: String,
+        val urlN: String?,
         val urlZ: String?,
         val urlC: String?,
         val urlB: String?,
@@ -44,7 +45,6 @@ data class Photo(
         val urlK: String?,
         val urlO: String?
 ) : PhotoItem, Parcelable {
-    override val thumbnailUrl: String get() = urlN
     override val thumbnailWidth: Int get() = widthN
     override val thumbnailHeight: Int get() = heightN
 
@@ -54,16 +54,15 @@ data class Photo(
 
     override fun describeContents() = 0
 
-    fun fullscreenImageUrl(displaySize: Point): String? {
-        val sizes = arrayOf(widthZ, widthC, widthB, widthH, widthK, widthO) zip arrayOf(heightZ, heightC, heightB, heightH, heightK, heightO)
-        val index = sizes.indexOfFirst { (it.first != null && it.second != null) && (it.first as Int > displaySize.x || it.second as Int > displaySize.y) }
-        val urls = arrayOf(urlZ, urlC, urlB, urlH, urlK, urlO)
-        if (index >= 0) {
-            return urls[index]
-        } else {
-            return urls.last { it != null }
-        }
-    }
+    override fun thumbnailUrl(fillWidth: Int, fillHeight: Int) = getUrlOfSmallestPhotoToFillSize(
+            fillWidth,
+            fillHeight,
+            arrayOf(widthN, widthZ, widthC, widthB, widthH, widthK, widthO).filterNotNull(),
+            arrayOf(heightN, heightZ, heightC, heightB, heightH, heightK, heightO).filterNotNull(),
+            arrayOf(urlN, urlZ, urlC, urlB, urlH, urlK, urlO).filterNotNull()
+    )
+
+    fun fullscreenImageUrl(displaySize: Point) = thumbnailUrl(displaySize.x, displaySize.y)
 
     companion object {
         @JvmField val CREATOR = PaperParcelPhoto.CREATOR

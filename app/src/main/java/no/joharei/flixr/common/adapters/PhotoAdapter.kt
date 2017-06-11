@@ -99,7 +99,7 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
             }
             textView.layoutParams.width = size.width
             Picasso.with(activity)
-                    .load(photo.thumbnailUrl)
+                    .load(photo.thumbnailUrl(size.width, size.height))
                     .placeholder(R.color.black_opaque)
                     .error(R.drawable.ic_error)
                     .into(imageView)
