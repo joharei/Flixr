@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView
 import android.widget.TextView
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
-import com.fivehundredpx.greedolayout.GreedoLayoutManager
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.adapters.PhotoAdapter
+import no.joharei.flixr.utils.FocusingGreedoLayoutManager
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -43,7 +43,7 @@ class PhotosetsActivity : Activity(), PhotosetsView {
                 text = userName
             }
             recyclerView = recyclerView {
-                layoutManager = GreedoLayoutManager(photosetsAdapter).apply {
+                layoutManager = FocusingGreedoLayoutManager(photosetsAdapter).apply {
                     setMaxRowHeight(dimen(R.dimen.max_thumbnail_height))
                     photosetsAdapter.sizeCalculator = sizeCalculator
                 }
