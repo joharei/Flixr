@@ -19,6 +19,7 @@ internal constructor() {
         var preparedObservable: Observable<T>? = null
 
         if (useCache) {
+            @Suppress("UNCHECKED_CAST")
             preparedObservable = apiObservables.get(clazz.toString() + key) as? Observable<T>
         }
 

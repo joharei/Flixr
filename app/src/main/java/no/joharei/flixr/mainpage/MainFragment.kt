@@ -122,7 +122,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
 
     private fun setupUIElements() {
         title = getString(R.string.hi_title, CommonPreferences.getUsername(activity))
-        val titleText = titleView.findViewById(R.id.title_text) as TextView
+        val titleText: TextView = titleView.findViewById(R.id.title_text)
         titleText.setShadowLayer(5f, 1.5f, 1.3f, Color.BLACK)
         headersState = BrowseFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true

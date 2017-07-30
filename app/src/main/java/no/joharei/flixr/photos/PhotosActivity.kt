@@ -50,27 +50,27 @@ class PhotosActivity : Activity(), PhotosView {
                     // different page in the DetailsActivity. We must update the shared element
                     // so that the correct one falls into place.
                     val newTransitionName = photosPresenter.photos[currentPosition].id.toString()
-                    val newSharedElement = recyclerView.findViewWithTag(newTransitionName)
-                    if (newSharedElement != null) {
+                    val newSharedElement: View? = recyclerView.findViewWithTag(newTransitionName)
+                    newSharedElement?.let {
                         names.clear()
                         names.add(newTransitionName)
                         sharedElements.clear()
-                        sharedElements.put(newTransitionName, newSharedElement)
+                        sharedElements.put(newTransitionName, it)
                     }
                 }
 
                 tmpReenterState = null
             } else {
                 // If tmpReenterState is null, then the activity is exiting.
-                val navigationBar = findViewById(android.R.id.navigationBarBackground)
-                val statusBar = findViewById(android.R.id.statusBarBackground)
-                if (navigationBar != null) {
-                    names.add(navigationBar.transitionName)
-                    sharedElements.put(navigationBar.transitionName, navigationBar)
+                val navigationBar: View? = findViewById(android.R.id.navigationBarBackground)
+                val statusBar: View? = findViewById(android.R.id.statusBarBackground)
+                navigationBar?.let {
+                    names.add(it.transitionName)
+                    sharedElements.put(it.transitionName, it)
                 }
-                if (statusBar != null) {
-                    names.add(statusBar.transitionName)
-                    sharedElements.put(statusBar.transitionName, statusBar)
+                statusBar?.let {
+                    names.add(it.transitionName)
+                    sharedElements.put(it.transitionName, it)
                 }
             }
         }

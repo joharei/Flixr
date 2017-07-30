@@ -6,6 +6,7 @@ import android.support.v17.leanback.widget.Presenter
 import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.view.ContextThemeWrapper
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
@@ -87,6 +88,6 @@ class CardPresenter(val context: Context) : Presenter() {
         // Both background colors should be set because the view's background is temporarily visible
         // during animations.
         view.setBackgroundColor(color)
-        view.findViewById(R.id.info_field).setBackgroundColor(color)
+        view.findViewById<View>(R.id.info_field).setBackgroundColor(color)
     }
 }

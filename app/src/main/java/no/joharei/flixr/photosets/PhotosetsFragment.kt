@@ -34,7 +34,7 @@ class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
         setGridPresenter(gridPresenter)
 
         adapter = photosetsAdapter
-        setOnItemViewClickedListener { itemViewHolder, item, rowViewHolder, row ->
+        setOnItemViewClickedListener { _, item, _, _ ->
             if (item is Photoset) {
                 val intent = Henson.with(activity)
                         .gotoPhotosActivity()

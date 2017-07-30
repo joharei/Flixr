@@ -28,7 +28,7 @@ class PhotoViewerActivity : Activity() {
     private val callback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: MutableList<String>, sharedElements: MutableMap<String, View>) {
             if (isReturning) {
-                val sharedElement = (pager.adapter as PhotoViewAdapter).currentItem?.findViewById(PhotoItemUI.IMAGE_ID)
+                val sharedElement: View? = (pager.adapter as PhotoViewAdapter).currentItem?.findViewById(PhotoItemUI.IMAGE_ID)
                 if (sharedElement == null) {
                     // If shared element is null, then it has been scrolled off screen and
                     // no longer visible. In this case we cancel the shared element transition by
@@ -98,12 +98,12 @@ class PhotoViewerActivity : Activity() {
     }
 
     private fun toggleTitle(position: Int) {
-        val imageTitle = pager.findViewWithTag("imageTitle" + position)
-        if (imageTitle != null) {
-            if (imageTitle.alpha == 1f) {
-                imageTitle.animate().alpha(0f).start()
+        val imageTitle: View? = pager.findViewWithTag("imageTitle" + position)
+        imageTitle?.let {
+            if (it.alpha == 1f) {
+                it.animate().alpha(0f).start()
             } else {
-                imageTitle.animate().alpha(1f).start()
+                it.animate().alpha(1f).start()
             }
         }
     }

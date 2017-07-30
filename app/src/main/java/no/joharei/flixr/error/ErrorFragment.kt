@@ -16,6 +16,6 @@ class ErrorFragment : android.support.v17.leanback.app.ErrorFragment() {
         setDefaultBackground(true)
 
         buttonText = resources.getString(R.string.dismiss_error)
-        setButtonClickListener { view -> activity.finish() }
+        setButtonClickListener { activity.finish() }
     }
 }
