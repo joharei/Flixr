@@ -37,7 +37,7 @@ android {
 
 ext {
     ankoVersion = '0.10.1'
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '25.4.0'
     okhttp3Version = '3.8.0'
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
@@ -46,7 +46,7 @@ ext {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin & Anko
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
