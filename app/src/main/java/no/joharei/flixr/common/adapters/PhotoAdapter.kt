@@ -3,7 +3,10 @@ package no.joharei.flixr.common.adapters
 
 import android.app.Activity
 import android.app.ActivityOptions
+import android.graphics.drawable.Drawable
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Size
 import android.view.Gravity.BOTTOM
 import android.view.View
 import android.view.View.generateViewId
@@ -11,24 +14,34 @@ import android.view.ViewGroup
 import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.util.FixedPreloadSizeProvider
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator
-import com.squareup.picasso.Picasso
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.utils.selectableItemBackground
 import org.jetbrains.anko.*
 import java.util.*
 
-internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(), GreedoLayoutSizeCalculator.SizeCalculatorDelegate, AnkoLogger {
-    private val PHOTO_TYPE = 0
 
-    private val PHOTOSET_TYPE = 1
+internal class PhotoAdapter(
+        private val activity: Activity
+) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(),
+        GreedoLayoutSizeCalculator.SizeCalculatorDelegate,
+        ListPreloader.PreloadModelProvider<PhotoItem>,
+        AnkoLogger {
+
     private val photos = ArrayList<PhotoItem>()
-    internal lateinit var sizeCalculator: GreedoLayoutSizeCalculator
-    internal var isPhotoActivityStarted = false
-    internal var userId: String? = null
+    lateinit var sizeCalculator: GreedoLayoutSizeCalculator
+    var isPhotoActivityStarted = false
+    var userId: String? = null
+    private val thumbnailRequest = GlideApp.with(activity)
 
 
     fun swap(photos: List<PhotoItem>) {
@@ -48,8 +61,8 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
         return if (photos[position] is Photoset) PHOTOSET_TYPE else PHOTO_TYPE
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val itemView = PhotoItemUI().createView(AnkoContext.create(parent!!.context, parent))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemView = PhotoItemUI().createView(AnkoContext.create(parent.context, parent))
         return ViewHolder(itemView)
     }
 
@@ -61,15 +74,48 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
         return photos.size
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        recyclerView?.let {
+            //            it.layoutManager = FocusingGreedoLayoutManager(this).apply {
+//                setMaxRowHeight(it.dimen(R.dimen.max_thumbnail_height))
+//                this@PhotoAdapter.sizeCalculator = sizeCalculator
+//            }
+//            it.addItemDecoration(GreedoSpacingItemDecoration(it.dimen(R.dimen.photos_spacing)))
+            it.layoutManager = GridLayoutManager(it.context, 4)
+
+            it.setRecyclerListener { holder -> GlideApp.with(it).clear((holder as ViewHolder).imageView) }
+            for (type in intArrayOf(PHOTO_TYPE, PHOTOSET_TYPE)) {
+                it.recycledViewPool.setMaxRecycledViews(type, it.height / it.dimen(R.dimen.max_thumbnail_height) * 12)
+            }
+            it.addOnScrollListener(
+                    RecyclerViewPreloader(Glide.with(recyclerView),
+                            this,
+//                            ListPreloader.PreloadSizeProvider { _: PhotoItem, adapterPosition, _ ->
+//                                sizeCalculator.sizeForChildAtPosition(adapterPosition).let { intArrayOf(it.width, it.height) }
+//                            },
+                            FixedPreloadSizeProvider(it.dip(150), it.dip(100)),
+                            15
+                    )
+            )
+        }
+    }
+
+    override fun getPreloadItems(position: Int): MutableList<PhotoItem> =
+            photos.subList(position, position + 1)
+
+    override fun getPreloadRequestBuilder(item: PhotoItem): RequestBuilder<Drawable> {
+        return thumbnailRequest.load(item)
+    }
+
     internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private var pos = 0
         val imageView = itemView.find<ImageView>(PhotoItemUI.IMAGE_ID)
-        val selectionView = itemView.find<View>(PhotoItemUI.SELECTION_VIEW_ID).apply {
+        private val selectionView = itemView.find<View>(PhotoItemUI.SELECTION_VIEW_ID).apply {
             isFocusable = true
             isFocusableInTouchMode = true
             setOnFocusChangeListener { _, hasFocus -> itemView.isSelected = hasFocus }
         }
-        val textView by lazy {
+        private val textView by lazy {
             (itemView.find<ViewStub>(PhotoItemUI.TEXT_STUB_ID).inflate() as TextView).apply {
                 setHorizontallyScrolling(true)
             }
@@ -87,10 +133,10 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
                 }
                 is Photo -> {
                     imageView.transitionName = photo.id.toString()
-                    imageView.tag = photo.id.toString()
                 }
             }
-            val size = sizeCalculator.sizeForChildAtPosition(position)
+//            val size = sizeCalculator.sizeForChildAtPosition(position)
+            val size = Size(itemView.dip(150), itemView.dip(100))
             for (view in arrayOf(imageView, selectionView)) {
                 view.layoutParams.apply {
                     width = size.width
@@ -98,8 +144,8 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
                 }
             }
             textView.layoutParams.width = size.width
-            Picasso.with(activity)
-                    .load(photo.thumbnailUrl(size.width, size.height))
+            thumbnailRequest
+                    .load(photo)
                     .placeholder(R.color.black_opaque)
                     .error(R.drawable.ic_error)
                     .into(imageView)
@@ -158,4 +204,12 @@ internal class PhotoAdapter(private val activity: Activity) : RecyclerView.Adapt
             }
         }
     }
+
+    companion object {
+
+        private const val PHOTO_TYPE = 0
+        private const val PHOTOSET_TYPE = 1
+
+    }
+
 }

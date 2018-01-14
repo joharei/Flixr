@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "no.joharei.flixr"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -37,12 +37,13 @@ android {
 
 ext {
     ankoVersion = '0.10.1'
-    supportLibVersion = '26.0.0'
+    supportLibVersion = '27.0.2'
     okhttp3Version = '3.8.0'
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
     dartVersion = '2.0.2'
-    paperParcelVersion = '2.0.1'
+    paperParcelVersion = '2.0.4'
+    glideVersion = '4.0.0'
 }
 
 dependencies {
@@ -66,7 +67,7 @@ dependencies {
 
     // RxJava
     implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
-    implementation "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.8"
 
     // networking
     implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
@@ -75,10 +76,13 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'se.akerfeldt:okhttp-signpost:1.1.0'
     implementation 'oauth.signpost:signpost-core:1.2.1.2'
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
+    implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
     // Dart & Henson
     implementation "com.f2prateek.dart:dart:$dartVersion"

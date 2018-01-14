@@ -9,13 +9,10 @@ import android.support.v7.widget.RecyclerView
 import android.widget.TextView
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
-import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.adapters.PhotoAdapter
-import no.joharei.flixr.utils.FocusingGreedoLayoutManager
 import org.jetbrains.anko.*
-import org.jetbrains.anko.recyclerview.v7.recyclerView
 
 class PhotosetsActivity : Activity(), PhotosetsView {
 
@@ -42,14 +39,8 @@ class PhotosetsActivity : Activity(), PhotosetsView {
                 verticalPadding = dimen(R.dimen.activity_vertical_margin)
                 text = userName
             }
-            recyclerView = recyclerView {
-                layoutManager = FocusingGreedoLayoutManager(photosetsAdapter).apply {
-                    setMaxRowHeight(dimen(R.dimen.max_thumbnail_height))
-                    photosetsAdapter.sizeCalculator = sizeCalculator
-                }
+            recyclerView = include<RecyclerView>(R.layout.vertical_scrollbar_recyclerview) {
                 adapter = photosetsAdapter
-                addItemDecoration(GreedoSpacingItemDecoration(dimen(R.dimen.photos_spacing)))
-                isVerticalScrollBarEnabled = true
             }.lparams(matchParent, matchParent)
         }
 

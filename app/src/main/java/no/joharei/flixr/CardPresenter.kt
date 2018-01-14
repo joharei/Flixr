@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
 import org.jetbrains.anko.dimen
 import org.jetbrains.anko.find
@@ -62,9 +62,9 @@ class CardPresenter(val context: Context) : Presenter() {
         }?.let {
             cardView.setMainImageDimensions(it, imageHeight)
         }
-        Picasso.with(context)
+        GlideApp.with(context)
                 .load(when (item) {
-                    is Photoset -> item.thumbnailUrl(Int.MAX_VALUE, context.dimen(R.dimen.photo_card_height))
+                    is Photoset -> item.photoUrl(Int.MAX_VALUE, context.dimen(R.dimen.photo_card_height))
                     is Contact -> item.cardImageUrl
                     else -> null
                 })

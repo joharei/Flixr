@@ -12,12 +12,14 @@ fun getDisplaySize(context: Context): Point {
     return size
 }
 
-fun getUrlOfSmallestPhotoToFillSize(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): String {
-    val sizes = photoWidths zip photoHeights
-    val index = sizes.indexOfFirst { (it.first >= fillWidth || it.second >= fillHeight) }
-    if (index >= 0) {
-        return photoUrls[index]
-    } else {
-        return photoUrls.last()
-    }
-}
+fun getUrlOfSmallestPhotoToFillSize(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): String =
+        (photoWidths zip photoHeights)
+                .indexOfFirst { (width, height) -> width >= fillWidth || height >= fillHeight }
+                .let { photoUrls.getOrElse(it) { photoUrls.last() } }
+
+fun getUrlsOfLargerPhotos(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): List<String> =
+        (photoWidths zip photoHeights)
+                .withIndex()
+                .filter { (_, pair) -> pair.first >= fillWidth || pair.second >= fillHeight }
+                .drop(1)
+                .map { (index, _) -> photoUrls.getOrElse(index) { photoUrls.last() } }

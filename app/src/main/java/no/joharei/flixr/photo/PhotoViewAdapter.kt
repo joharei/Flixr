@@ -2,6 +2,7 @@ package no.joharei.flixr.photo
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.support.v4.view.PagerAdapter
 import android.support.v4.widget.TextViewCompat
 import android.view.Gravity
@@ -10,90 +11,91 @@ import android.view.View.generateViewId
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.utils.getDisplaySize
 import org.jetbrains.anko.*
 import java.util.*
 
 
-internal class PhotoViewAdapter(private val activity: Activity, private val photos: ArrayList<Photo>, private val positionInAlbum: Int) : PagerAdapter() {
-    val displaySize = getDisplaySize(activity)
+internal class PhotoViewAdapter(
+        private val activity: Activity,
+        private val photos: ArrayList<Photo>,
+        private val positionInAlbum: Int
+) : PagerAdapter() {
+
+    private val displaySize = getDisplaySize(activity)
     var currentItem: View? = null
 
     override fun getCount(): Int {
         return photos.size
     }
 
-    override fun isViewFromObject(view: View?, obj: Any?): Boolean {
+    override fun isViewFromObject(view: View, obj: Any): Boolean {
         return view === obj
     }
 
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any? {
-        if (container == null) {
-            return null
+    private val requestListener = object : RequestListener<Drawable> {
+        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            activity.startPostponedEnterTransition()
+            return false
         }
+
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+            activity.startPostponedEnterTransition()
+            return false
+        }
+
+    }
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val context = container.context
         val photoItemUI = PhotoItemUI()
         val itemLayout = photoItemUI.createView(AnkoContext.create(context, container))
 
         val photo = photos[position]
-        val imageView = itemLayout.find<ImageView>(PhotoItemUI.IMAGE_ID)
+        val imageView = itemLayout.findViewById<ImageView>(PhotoItemUI.IMAGE_ID)
         imageView.transitionName = photo.id.toString()
-        val textView = itemLayout.find<TextView>(PhotoItemUI.TEXT_ID)
+        val textView = itemLayout.findViewById<TextView>(PhotoItemUI.TEXT_ID)
         textView.tag = "imageTitle" + position
         textView.text = photo.title
 
-        val fullscreenImageUrl = photo.fullscreenImageUrl(displaySize)
-        // Try to load fullscreen image from cache
-        Picasso.with(context)
+        val fullscreenImageUrl = photo.photoUrl(displaySize.x, displaySize.y)
+
+        val thumbnailRequest = GlideApp.with(context)
+                // TODO: this should be the same url as the photo grid thumbnail
+                .load(photo.photoUrl(320, 320))
+                .listener(requestListener)
+        if (position == positionInAlbum) {
+            thumbnailRequest.dontAnimate()
+        }
+        GlideApp.with(context)
                 .load(fullscreenImageUrl)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(imageView, object : Callback {
-                    override fun onSuccess() {
-                        activity.startPostponedEnterTransition()
-                    }
-
-                    override fun onError() {
-                        // If there was no cache, load the thumbnail first...
-                        val imageRequest = Picasso.with(context)
-                                .load(photo.thumbnailUrl(320, 320))
-                        if (position == positionInAlbum) {
-                            imageRequest.noFade()
-                        }
-                        val fullScreenRequest = Picasso.with(context)
-                                .load(fullscreenImageUrl)
-                                .noPlaceholder()
-                        imageRequest.into(imageView, object : Callback {
-                            override fun onSuccess() {
-                                activity.startPostponedEnterTransition()
-                                // ... and whether loading the thumbnail was successful or not,
-                                // load the full screen image
-                                fullScreenRequest.into(imageView)
-                            }
-
-                            override fun onError() {
-                                activity.startPostponedEnterTransition()
-                                fullScreenRequest.into(imageView)
-                            }
-                        })
-                    }
-                })
+                .thumbnail(thumbnailRequest)
+                .listener(requestListener)
+                .priority(Priority.HIGH)
+                .into(imageView)
 
         container.addView(itemLayout)
         return itemLayout
     }
 
-    override fun destroyItem(container: ViewGroup?, position: Int, obj: Any?) {
-        container?.removeView(obj as View)
+    override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+        container.findViewById<ImageView>(PhotoItemUI.IMAGE_ID)?.let {
+            GlideApp.with(container).clear(it)
+        }
+        container.removeView(obj as View)
     }
 
-    override fun setPrimaryItem(container: ViewGroup?, position: Int, `object`: Any?) {
-        super.setPrimaryItem(container, position, `object`)
-        currentItem = `object` as View?
+    override fun setPrimaryItem(container: ViewGroup, position: Int, obj: Any) {
+        super.setPrimaryItem(container, position, obj)
+        currentItem = obj as View
     }
 
     class PhotoItemUI : AnkoComponent<ViewGroup> {

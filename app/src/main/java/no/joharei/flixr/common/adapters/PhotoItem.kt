@@ -4,5 +4,5 @@ interface PhotoItem {
     val thumbnailWidth: Int
     val thumbnailHeight: Int
 
-    fun thumbnailUrl(fillWidth: Int, fillHeight: Int): String
+    fun photoUrl(width: Int, height: Int): String
 }

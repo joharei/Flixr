@@ -1,11 +1,11 @@
 package no.joharei.flixr.api.models
 
-import android.graphics.Point
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import no.joharei.flixr.common.adapters.PhotoItem
 import no.joharei.flixr.utils.getUrlOfSmallestPhotoToFillSize
+import no.joharei.flixr.utils.getUrlsOfLargerPhotos
 import paperparcel.PaperParcel
 
 @PaperParcel
@@ -54,17 +54,24 @@ data class Photo(
 
     override fun describeContents() = 0
 
-    override fun thumbnailUrl(fillWidth: Int, fillHeight: Int) = getUrlOfSmallestPhotoToFillSize(
-            fillWidth,
-            fillHeight,
+    override fun photoUrl(width: Int, height: Int) = getUrlOfSmallestPhotoToFillSize(
+            width,
+            height,
             arrayOf(widthN, widthZ, widthC, widthB, widthH, widthK, widthO).filterNotNull(),
             arrayOf(heightN, heightZ, heightC, heightB, heightH, heightK, heightO).filterNotNull(),
             arrayOf(urlN, urlZ, urlC, urlB, urlH, urlK, urlO).filterNotNull()
     )
 
-    fun fullscreenImageUrl(displaySize: Point) = thumbnailUrl(displaySize.x, displaySize.y)
+    fun alternativeUrls(width: Int, height: Int) = getUrlsOfLargerPhotos(
+            width,
+            height,
+            arrayOf(widthN, widthZ, widthC, widthB, widthH, widthK, widthO).filterNotNull(),
+            arrayOf(heightN, heightZ, heightC, heightB, heightH, heightK, heightO).filterNotNull(),
+            arrayOf(urlN, urlZ, urlC, urlB, urlH, urlK, urlO).filterNotNull()
+    )
 
     companion object {
+        @Suppress("unused")
         @JvmField val CREATOR = PaperParcelPhoto.CREATOR
     }
 }

@@ -34,7 +34,7 @@ data class Photoset(
 
     override val thumbnailWidth get() = extrasEnvelope.widthN ?: 0
 
-    override fun thumbnailUrl(fillWidth: Int, fillHeight: Int) = extrasEnvelope.backgroundImageUrl(fillWidth, fillHeight)
+    override fun photoUrl(width: Int, height: Int) = extrasEnvelope.backgroundImageUrl(width, height)
 
     fun backgroundImageUrl(displaySize: Point) = extrasEnvelope.backgroundImageUrl(displaySize.x, displaySize.y)
 }

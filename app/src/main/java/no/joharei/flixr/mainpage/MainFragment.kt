@@ -1,7 +1,6 @@
 package no.joharei.flixr.mainpage
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -13,14 +12,15 @@ import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.TextView
 import android.widget.Toast
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
 import no.joharei.flixr.api.LocalCredentialStore
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.error.BrowseErrorActivity
+import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.utils.Constants
@@ -35,7 +35,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     private val mHandler = Handler()
     private val mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
     private val mDefaultBackground: Drawable by lazy {
-        ContextCompat.getDrawable(activity, R.drawable.default_background)
+        ContextCompat.getDrawable(activity, R.drawable.default_background)!!
     }
     private val mMetrics: DisplayMetrics by lazy {
         DisplayMetrics()
@@ -44,17 +44,6 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     private var mBackgroundURL: String? = null
     private val mBackgroundManager: BackgroundManager by lazy {
         BackgroundManager.getInstance(activity)
-    }
-    private val mBackgroundTarget = object : Target {
-        override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
-            mBackgroundManager.setBitmap(bitmap)
-        }
-
-        override fun onBitmapFailed(errorDrawable: Drawable) {
-        }
-
-        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-        }
     }
     private val mainPresenter = MainPresenter()
     private val photosetAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
@@ -146,12 +135,17 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     private fun updateBackground(uri: String) {
         val width = mMetrics.widthPixels
         val height = mMetrics.heightPixels
-        Picasso.with(activity)
+        GlideApp.with(activity)
                 .load(uri)
                 .centerCrop()
-                .resize(width, height)
+                .override(width, height)
                 .error(mDefaultBackground)
-                .into(mBackgroundTarget)
+                .into(object : SimpleTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
+                        mBackgroundManager.drawable = resource
+                    }
+
+                })
         mBackgroundTimer?.cancel()
     }
 
