@@ -4,8 +4,8 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import no.joharei.flixr.common.adapters.PhotoItem
-import no.joharei.flixr.utils.getUrlOfSmallestPhotoToFillSize
-import no.joharei.flixr.utils.getUrlsOfLargerPhotos
+import no.joharei.flixr.common.getUrlOfSmallestPhotoToFillSize
+import no.joharei.flixr.common.getUrlsOfLargerPhotos
 import paperparcel.PaperParcel
 
 @PaperParcel

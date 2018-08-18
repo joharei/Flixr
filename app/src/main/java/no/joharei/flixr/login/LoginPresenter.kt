@@ -6,32 +6,30 @@ import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.api.LocalCredentialStore
 import no.joharei.flixr.api.models.AuthToken
+import no.joharei.flixr.common.Constants
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
-import no.joharei.flixr.utils.Constants
 import oauth.signpost.OAuth
 import oauth.signpost.OAuthConsumer
 import oauth.signpost.OAuthProvider
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.info
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
+import timber.log.Timber
 import javax.inject.Inject
 
-class LoginPresenter : AnkoLogger {
+class LoginPresenter {
     @Inject
     lateinit var loginApi: LoginApi
     @Inject
     lateinit var oAuthConsumer: OkHttpOAuthConsumer
     lateinit var view: LoginView
-    val compositeSubscription = CompositeDisposable()
+    private val compositeSubscription = CompositeDisposable()
 
     fun attachView(view: LoginView) {
         this.view = view
         MainApplication.component.inject(this)
     }
 
-    fun getUserDetails() {
+    private fun getUserDetails() {
         val detailsSub = loginApi.fetchUserDetails()
                 .applyDefaultSchedulers()
                 .subscribe(
@@ -41,7 +39,7 @@ class LoginPresenter : AnkoLogger {
                             CommonPreferences.setUsername(view.context, user.username)
                             view.getUserDetailsCompleted()
                         },
-                        { throwable -> error("Error getting user details", throwable) })
+                        { throwable -> Timber.e(throwable, "Error getting user details") })
         compositeSubscription.add(detailsSub)
     }
 
@@ -49,14 +47,14 @@ class LoginPresenter : AnkoLogger {
      * Retrieve the request token, then open a browser for the user to authorize it
      */
     fun retrieveRequestToken(consumer: OAuthConsumer, provider: OAuthProvider) {
-        val requestTokenSub = Observable.defer({ Observable.just(provider.retrieveRequestToken(consumer, Constants.OAUTH_CALLBACK_URL)) })
+        val requestTokenSub = Observable.defer { Observable.just(provider.retrieveRequestToken(consumer, Constants.OAUTH_CALLBACK_URL)) }
                 .applyDefaultSchedulers()
                 .subscribe(
                         { url ->
-                            info("Popping a browser with the authorize URL : " + url)
+                            Timber.i("Popping a browser with the authorize URL : $url")
                             view.loadUrl(url)
                         },
-                        { throwable -> error("Error during OAUth retrieve request token", throwable) })
+                        { throwable -> Timber.e(throwable, "Error during OAUth retrieve request token") })
         compositeSubscription.add(requestTokenSub)
     }
 
@@ -65,10 +63,10 @@ class LoginPresenter : AnkoLogger {
      * for future API calls.
      */
     fun retrieveAccessToken(consumer: OAuthConsumer, provider: OAuthProvider, uri: Uri) {
-        val accessTokenSub = Observable.fromCallable({
-            val oauth_verifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER)
+        val accessTokenSub = Observable.fromCallable {
+            val oauthVerifier = uri.getQueryParameter(OAuth.OAUTH_VERIFIER)
 
-            provider.retrieveAccessToken(consumer, oauth_verifier)
+            provider.retrieveAccessToken(consumer, oauthVerifier)
 
             val credentialStore = LocalCredentialStore(view.context)
             val authToken = AuthToken(consumer.token, consumer.tokenSecret)
@@ -78,14 +76,14 @@ class LoginPresenter : AnkoLogger {
             val secret = authToken.authTokenSecret
 
             oAuthConsumer.setTokenWithSecret(token, secret)
-        })
+        }
                 .applyDefaultSchedulers()
                 .subscribe(
                         {
-                            info("OAuth - Access Token Retrieved")
+                            Timber.i("OAuth - Access Token Retrieved")
                             getUserDetails()
                         },
-                        { throwable -> error("OAuth - Access Token Retrieval Error", throwable) })
+                        { throwable -> Timber.e(throwable, "OAuth - Access Token Retrieval Error") })
         compositeSubscription.add(accessTokenSub)
     }
 

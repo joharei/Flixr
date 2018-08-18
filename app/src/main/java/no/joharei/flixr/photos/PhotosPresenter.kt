@@ -5,12 +5,11 @@ import no.joharei.flixr.MainApplication
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class PhotosPresenter : AnkoLogger {
+class PhotosPresenter {
     @Inject
     internal lateinit var photosApi: PhotosApi
     internal val photos = ArrayList<Photo>()
@@ -34,7 +33,7 @@ class PhotosPresenter : AnkoLogger {
                             view.showPhotos(photos)
                         },
                         { throwable ->
-                            error("Failed fetching photos", throwable)
+                            Timber.e(throwable, "Failed fetching photos")
                             photosApi.clearCache()
                             //TODO
                         })

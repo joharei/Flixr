@@ -1,7 +1,7 @@
 package no.joharei.flixr.mainpage.models
 
 import com.google.gson.annotations.SerializedName
-import no.joharei.flixr.utils.Constants
+import no.joharei.flixr.common.Constants
 import java.util.*
 
 data class Contact(

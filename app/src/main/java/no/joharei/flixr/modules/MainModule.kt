@@ -8,8 +8,8 @@ import no.joharei.flixr.api.AndroidFlickrApi
 import no.joharei.flixr.api.FlickrApiContainer
 import no.joharei.flixr.api.FlickrInterceptor
 import no.joharei.flixr.api.LocalCredentialStore
-import no.joharei.flixr.utils.ApiKeys
-import no.joharei.flixr.utils.Constants
+import no.joharei.flixr.common.ApiKeys
+import no.joharei.flixr.common.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory

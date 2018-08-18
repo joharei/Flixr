@@ -1,4 +1,4 @@
-package no.joharei.flixr.utils
+package no.joharei.flixr.common
 
 import android.content.Context
 import android.graphics.Point
@@ -15,7 +15,7 @@ fun getDisplaySize(context: Context): Point {
 fun getUrlOfSmallestPhotoToFillSize(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): String =
         (photoWidths zip photoHeights)
                 .indexOfFirst { (width, height) -> width >= fillWidth || height >= fillHeight }
-                .let { photoUrls.getOrElse(it) { photoUrls.last() } }
+                .let { index -> photoUrls.getOrElse(index) { photoUrls.last() } }
 
 fun getUrlsOfLargerPhotos(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): List<String> =
         (photoWidths zip photoHeights)

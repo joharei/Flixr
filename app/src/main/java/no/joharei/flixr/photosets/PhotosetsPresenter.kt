@@ -3,11 +3,10 @@ package no.joharei.flixr.photosets
 import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.tools.applyDefaultSchedulers
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
+import timber.log.Timber
 import javax.inject.Inject
 
-class PhotosetsPresenter : AnkoLogger {
+class PhotosetsPresenter {
     @Inject
     internal lateinit var photosetsApi: PhotosetsApi
     private lateinit var view: PhotosetsView
@@ -28,7 +27,7 @@ class PhotosetsPresenter : AnkoLogger {
                             view.showPhotosets(photosets.photosets)
                         },
                         { throwable ->
-                            error("Failed fetching photosets", throwable)
+                            Timber.e(throwable, "Failed fetching photosets")
                             photosetsApi.clearCache()
                             // TODO
                         }))

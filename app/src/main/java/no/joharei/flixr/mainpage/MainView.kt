@@ -6,7 +6,7 @@ import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.mainpage.models.Contact
 
 interface MainView {
-    fun getContext(): Context
+    fun getViewContext(): Context
 
     fun showMyPhotosets(photosets: List<Photoset>)
 

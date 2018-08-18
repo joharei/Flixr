@@ -5,18 +5,15 @@ import android.app.SharedElementCallback
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.annotation.Nullable
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.TextView
+import androidx.annotation.Nullable
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
+import kotlinx.android.synthetic.main.activity_photos.*
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.adapters.PhotoAdapter
-import org.jetbrains.anko.*
 
 
 class PhotosActivity : Activity(), PhotosView {
@@ -33,8 +30,6 @@ class PhotosActivity : Activity(), PhotosView {
         PhotoAdapter(this)
     }
     private val photosPresenter: PhotosPresenter = PhotosPresenter()
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var titleText: TextView
     private var tmpReenterState: Bundle? = null
 
     private val callback = object : SharedElementCallback() {
@@ -47,7 +42,7 @@ class PhotosActivity : Activity(), PhotosView {
                     // different page in the DetailsActivity. We must update the shared element
                     // so that the correct one falls into place.
                     val newTransitionName = photosPresenter.photos[currentPosition].id.toString()
-                    val newSharedElement: View? = recyclerView.findViewWithTag(newTransitionName)
+                    val newSharedElement: View? = photos_list.findViewWithTag(newTransitionName)
                     newSharedElement?.let {
                         names.clear()
                         names.add(newTransitionName)
@@ -77,17 +72,11 @@ class PhotosActivity : Activity(), PhotosView {
         super.onCreate(savedInstanceState)
         Dart.inject(this)
 
-        verticalLayout {
-            horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
-            titleText = textView {
-                TextViewCompat.setTextAppearance(this, R.style.TextStyleHeadline)
-                verticalPadding = dimen(R.dimen.activity_vertical_margin)
-                text = photosetTitle
-            }
-            recyclerView = include<RecyclerView>(R.layout.vertical_scrollbar_recyclerview) {
-                adapter = photoAdapter
-            }.lparams(matchParent, matchParent)
-        }
+        setContentView(R.layout.activity_photos)
+
+        title_text.text = photosetTitle
+        photos_list.adapter = photoAdapter
+
         setExitSharedElementCallback(callback)
 
         photosPresenter.attachView(this)
@@ -106,15 +95,15 @@ class PhotosActivity : Activity(), PhotosView {
         val startingPosition = tmpReenterState?.getInt(EXTRA_STARTING_ALBUM_POSITION)
         val currentPosition = tmpReenterState?.getInt(EXTRA_CURRENT_ALBUM_POSITION)
         if (currentPosition != null && startingPosition != currentPosition) {
-            recyclerView.scrollToPosition(currentPosition)
-            recyclerView.getChildAt(currentPosition)?.requestFocus()
+            photos_list.scrollToPosition(currentPosition)
+            photos_list.getChildAt(currentPosition)?.requestFocus()
         }
         postponeEnterTransition()
-        recyclerView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+        photos_list.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
-                recyclerView.viewTreeObserver.removeOnPreDrawListener(this)
+                photos_list.viewTreeObserver.removeOnPreDrawListener(this)
                 // TODO: figure out why it is necessary to request layout here in order to get a smooth transition.
-                recyclerView.requestLayout()
+                photos_list.requestLayout()
                 startPostponedEnterTransition()
                 return true
             }
@@ -130,13 +119,11 @@ class PhotosActivity : Activity(), PhotosView {
         photosPresenter.fetchPhotos(photosetId, userId)
     }
 
-    override fun getContext(): Context {
-        return ctx
-    }
+    override fun getContext(): Context = this
 
     override fun showPhotos(photos: List<Photo>) {
         photoAdapter.swap(photos)
-        titleText.requestFocus()
+        title_text.requestFocus()
     }
 
     companion object {

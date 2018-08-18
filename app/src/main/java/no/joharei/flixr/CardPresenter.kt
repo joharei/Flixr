@@ -1,20 +1,19 @@
 package no.joharei.flixr
 
 import android.content.Context
-import android.support.v17.leanback.widget.ImageCardView
-import android.support.v17.leanback.widget.Presenter
-import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.leanback.widget.ImageCardView
+import androidx.leanback.widget.Presenter
 import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.common.extensions.dimen
 import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
-import org.jetbrains.anko.dimen
-import org.jetbrains.anko.find
 
 class CardPresenter(val context: Context) : Presenter() {
     private var sSelectedBackgroundColor: Int = 0
@@ -28,7 +27,7 @@ class CardPresenter(val context: Context) : Presenter() {
         sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background)
 
         val cardView = object : ImageCardView(ContextThemeWrapper(context, R.style.CustomImageCardTheme)) {
-            val textView = find<TextView>(R.id.title_text)
+            val textView = findViewById<TextView>(R.id.title_text)
 
             init {
                 isFocusable = true

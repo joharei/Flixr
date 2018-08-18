@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -35,15 +36,18 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 ext {
-    ankoVersion = '0.10.1'
-    supportLibVersion = '28.0.0-rc01'
+    supportLibVersion = '1.0.0-rc01'
     okhttp3Version = '3.8.0'
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
     dartVersion = '2.0.2'
     paperParcelVersion = '2.0.6'
-    glideVersion = '4.0.0'
+    glideVersion = '4.8.0-SNAPSHOT'
 }
 
 dependencies {
@@ -51,15 +55,13 @@ dependencies {
 
     // Kotlin & Anko
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.anko:anko-sdk21:$ankoVersion"
-    implementation "org.jetbrains.anko:anko-appcompat-v7:$ankoVersion"
-    implementation "org.jetbrains.anko:anko-recyclerview-v7:$ankoVersion"
 
     // Support libraries
-    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
-    implementation "com.android.support:leanback-v17:$supportLibVersion"
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "androidx.recyclerview:recyclerview:$supportLibVersion"
+    implementation "androidx.leanback:leanback:$supportLibVersion"
+    implementation "androidx.appcompat:appcompat:$supportLibVersion"
+    implementation "androidx.annotation:annotation:$supportLibVersion"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 
     // Dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -68,6 +70,8 @@ dependencies {
     // RxJava
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
     implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // networking
     implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"

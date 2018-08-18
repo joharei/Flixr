@@ -10,59 +10,43 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ProgressBar
 import com.f2prateek.dart.HensonNavigable
+import kotlinx.android.synthetic.main.activity_login.*
 import no.joharei.flixr.R
+import no.joharei.flixr.common.ApiKeys
+import no.joharei.flixr.common.Constants
 import no.joharei.flixr.mainpage.MainActivity
-import no.joharei.flixr.utils.ApiKeys
-import no.joharei.flixr.utils.Constants
-import org.jetbrains.anko.*
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthProvider
+import timber.log.Timber
 
 
 @HensonNavigable
-class LoginActivity : Activity(), LoginView, AnkoLogger {
+class LoginActivity : Activity(), LoginView {
     lateinit var consumer: OkHttpOAuthConsumer
     lateinit var provider: OkHttpOAuthProvider
-    lateinit var webView: WebView
-    lateinit var progress: ProgressBar
     val loginPresenter: LoginPresenter = LoginPresenter()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val ID_PROGRESS = 1
-        relativeLayout {
-            progress = horizontalProgressBar {
-                id = ID_PROGRESS
-                horizontalPadding = R.dimen.activity_horizontal_margin
-                verticalPadding = R.dimen.activity_vertical_margin
-                visibility = View.GONE
-                isIndeterminate = true
-            }.lparams(height = dip(20)) {
-                centerHorizontally()
-            }
-            webView = webView().lparams {
-                below(ID_PROGRESS)
-            }.lparams(width = matchParent, height = matchParent)
-        }
+        setContentView(R.layout.activity_login)
 
         loginPresenter.attachView(this)
 
-        webView.settings.javaScriptEnabled = true
+        web_view.settings.javaScriptEnabled = true
 
         try {
             consumer = OkHttpOAuthConsumer(ApiKeys.CONSUMER_KEY, ApiKeys.CONSUMER_SECRET)
             provider = OkHttpOAuthProvider(Constants.REQUEST_URL, Constants.ACCESS_URL, Constants.AUTHORIZE_URL)
         } catch (e: Exception) {
-            error("Error creating consumer/provider", e)
+            Timber.e(e, "Error creating consumer/provider")
         }
 
-        debug("Starting task to retrieve request token")
+        Timber.d("Starting task to retrieve request token")
         loginPresenter.retrieveRequestToken(consumer, provider)
-        webView.setWebViewClient(object : WebViewClient() {
+        web_view.webViewClient = object : WebViewClient() {
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 progress.visibility = View.VISIBLE
@@ -71,18 +55,18 @@ class LoginActivity : Activity(), LoginView, AnkoLogger {
 
             override fun onPageFinished(view: WebView?, url: String?) {
 
-                if (url!!.startsWith(Constants.OAUTH_CALLBACK_URL)) {
+                if (url?.startsWith(Constants.OAUTH_CALLBACK_URL) == true) {
                     if (url.contains("oauth_token=")) {
-                        webView.visibility = View.INVISIBLE
+                        web_view.visibility = View.INVISIBLE
                         loginPresenter.retrieveAccessToken(consumer, provider, Uri.parse(url))
                     } else {
-                        webView.visibility = View.VISIBLE
+                        web_view.visibility = View.VISIBLE
                     }
                 }
                 progress.visibility = View.GONE
             }
 
-        })
+        }
     }
 
     override fun onDestroy() {
@@ -98,7 +82,7 @@ class LoginActivity : Activity(), LoginView, AnkoLogger {
     }
 
     override fun loadUrl(url: String) {
-        webView.loadUrl(url)
+        web_view.loadUrl(url)
     }
 
     override fun getUserDetailsCompleted() {

@@ -3,15 +3,14 @@ package no.joharei.flixr.mainpage
 import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.tools.applyDefaultSchedulers
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
+import timber.log.Timber
 import javax.inject.Inject
 
-class MainPresenter : AnkoLogger {
+class MainPresenter {
     @Inject
     lateinit var mainApi: MainApi
     lateinit var view: MainView
-    val compositeSubscription = CompositeDisposable()
+    private val compositeSubscription = CompositeDisposable()
 
     fun attachView(view: MainView) {
         this.view = view
@@ -24,7 +23,7 @@ class MainPresenter : AnkoLogger {
                 .subscribe(
                         { photosets -> view.showMyPhotosets(photosets.photosets) },
                         { throwable ->
-                            error("Failed fetching my photosets", throwable)
+                            Timber.e(throwable, "Failed fetching my photosets")
                             mainApi.clearCache()
                             // TODO
                         })
@@ -37,7 +36,7 @@ class MainPresenter : AnkoLogger {
                 .subscribe(
                         { contacts -> view.showMyContacts(contacts.contacts) },
                         { throwable ->
-                            error("Failed fetching my contacts", throwable)
+                            Timber.e(throwable, "Failed fetching my contacts")
                             mainApi.clearCache()
                             // TODO
                         })

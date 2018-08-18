@@ -4,14 +4,14 @@ import android.app.Activity
 import android.app.SharedElementCallback
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.view.ViewPager
 import android.view.View
+import androidx.viewpager.widget.ViewPager
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
+import kotlinx.android.synthetic.main.activity_photo_viewer.*
+import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
-import no.joharei.flixr.photo.PhotoViewAdapter.PhotoItemUI
 import no.joharei.flixr.photos.PhotosActivity
-import org.jetbrains.anko.support.v4.viewPager
 import java.util.*
 
 class PhotoViewerActivity : Activity() {
@@ -22,13 +22,12 @@ class PhotoViewerActivity : Activity() {
     @JvmField
     internal var startingPosition = -1
     private var currentPosition = -1
-    private lateinit var pager: ViewPager
     private var isReturning = false
 
     private val callback = object : SharedElementCallback() {
         override fun onMapSharedElements(names: MutableList<String>, sharedElements: MutableMap<String, View>) {
             if (isReturning) {
-                val sharedElement: View? = (pager.adapter as PhotoViewAdapter).currentItem?.findViewById(PhotoItemUI.IMAGE_ID)
+                val sharedElement: View? = (pager.adapter as PhotoViewAdapter).currentItem?.findViewById(R.id.image)
                 if (sharedElement == null) {
                     // If shared element is null, then it has been scrolled off screen and
                     // no longer visible. In this case we cancel the shared element transition by
@@ -42,7 +41,7 @@ class PhotoViewerActivity : Activity() {
                     names.clear()
                     names.add(sharedElement.transitionName)
                     sharedElements.clear()
-                    sharedElements.put(sharedElement.transitionName, sharedElement)
+                    sharedElements[sharedElement.transitionName] = sharedElement
                 }
             }
         }
@@ -52,16 +51,12 @@ class PhotoViewerActivity : Activity() {
         super.onCreate(savedInstanceState)
         Dart.inject(this)
 
-        pager = viewPager()
+        setContentView(R.layout.activity_photo_viewer)
 
         postponeEnterTransition()
         setEnterSharedElementCallback(callback)
 
-        if (savedInstanceState == null) {
-            currentPosition = startingPosition
-        } else {
-            currentPosition = savedInstanceState.getInt(STATE_CURRENT_PAGE_POSITION)
-        }
+        currentPosition = savedInstanceState?.getInt(STATE_CURRENT_PAGE_POSITION) ?: startingPosition
 
         val adapter = PhotoViewAdapter(this, photos, startingPosition)
         pager.adapter = adapter
@@ -98,7 +93,7 @@ class PhotoViewerActivity : Activity() {
     }
 
     private fun toggleTitle(position: Int) {
-        val imageTitle: View? = pager.findViewWithTag("imageTitle" + position)
+        val imageTitle: View? = pager.findViewWithTag("imageTitle$position")
         imageTitle?.let {
             if (it.alpha == 1f) {
                 it.animate().alpha(0f).start()

@@ -1,17 +1,18 @@
 package no.joharei.flixr.mainpage
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
-import android.support.v17.leanback.app.BackgroundManager
-import android.support.v17.leanback.app.BrowseFragment
-import android.support.v17.leanback.widget.*
-import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.leanback.app.BackgroundManager
+import androidx.leanback.app.BrowseSupportFragment
+import androidx.leanback.widget.*
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import no.joharei.flixr.CardPresenter
@@ -19,23 +20,21 @@ import no.joharei.flixr.Henson
 import no.joharei.flixr.R
 import no.joharei.flixr.api.LocalCredentialStore
 import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.common.Constants
+import no.joharei.flixr.common.getDisplaySize
 import no.joharei.flixr.error.BrowseErrorActivity
 import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
 import no.joharei.flixr.preferences.CommonPreferences
-import no.joharei.flixr.utils.Constants
-import no.joharei.flixr.utils.getDisplaySize
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.ctx
-import org.jetbrains.anko.debug
+import timber.log.Timber
 import java.util.*
 
-class MainFragment : BrowseFragment(), MainView, AnkoLogger {
+class MainFragment : BrowseSupportFragment(), MainView {
 
     private val mHandler = Handler()
     private val mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
     private val mDefaultBackground: Drawable by lazy {
-        ContextCompat.getDrawable(activity, R.drawable.default_background)!!
+        ContextCompat.getDrawable(requireContext(), R.drawable.default_background)!!
     }
     private val mMetrics: DisplayMetrics by lazy {
         DisplayMetrics()
@@ -46,8 +45,8 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         BackgroundManager.getInstance(activity)
     }
     private val mainPresenter = MainPresenter()
-    private val photosetAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
-    private val contactsAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
+    private val photosetAdapter by lazy { ArrayObjectAdapter(CardPresenter(requireContext())) }
+    private val contactsAdapter by lazy { ArrayObjectAdapter(CardPresenter(requireContext())) }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -60,7 +59,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
 
         adapter = mRowsAdapter
 
-        val credentialStore = LocalCredentialStore(activity)
+        val credentialStore = LocalCredentialStore(requireContext())
         if (credentialStore.noToken()) {
             startActivity(Henson.with(activity).gotoLoginActivity().build())
         } else {
@@ -78,7 +77,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
 
     override fun onDestroy() {
         super.onDestroy()
-        debug("onDestroy: " + mBackgroundTimer?.toString())
+        Timber.d("onDestroy: $mBackgroundTimer")
         mBackgroundTimer?.cancel()
     }
 
@@ -102,24 +101,28 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         contactsAdapter.addAll(0, contacts)
     }
 
+    override fun getViewContext(): Context = super.requireContext()
+
     private fun prepareBackgroundManager() {
-        if (!mBackgroundManager.isAttached) {
-            mBackgroundManager.attach(activity.window)
-            activity.windowManager.defaultDisplay.getMetrics(mMetrics)
+        activity?.let {
+            if (!mBackgroundManager.isAttached) {
+                mBackgroundManager.attach(it.window)
+                it.windowManager.defaultDisplay.getMetrics(mMetrics)
+            }
         }
     }
 
     private fun setupUIElements() {
-        title = getString(R.string.hi_title, CommonPreferences.getUsername(activity))
+        title = getString(R.string.hi_title, CommonPreferences.getUsername(requireContext()))
         val titleText: TextView = titleView.findViewById(R.id.title_text)
         titleText.setShadowLayer(5f, 1.5f, 1.3f, Color.BLACK)
-        headersState = BrowseFragment.HEADERS_ENABLED
+        headersState = BrowseSupportFragment.HEADERS_ENABLED
         isHeadersTransitionOnBackEnabled = true
 
         // set fastLane (or headers) background color
-        brandColor = ContextCompat.getColor(activity, R.color.fastlane_background)
+        brandColor = ContextCompat.getColor(requireContext(), R.color.fastlane_background)
         // set search icon color
-        searchAffordanceColor = ContextCompat.getColor(activity, R.color.search_opaque)
+        searchAffordanceColor = ContextCompat.getColor(requireContext(), R.color.search_opaque)
     }
 
     private fun setupEventListeners() {
@@ -135,13 +138,13 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
     private fun updateBackground(uri: String) {
         val width = mMetrics.widthPixels
         val height = mMetrics.heightPixels
-        GlideApp.with(activity)
+        GlideApp.with(requireContext())
                 .load(uri)
                 .centerCrop()
                 .override(width, height)
                 .error(mDefaultBackground)
                 .into(object : SimpleTarget<Drawable>() {
-                    override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                         mBackgroundManager.drawable = resource
                     }
 
@@ -191,7 +194,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         override fun onItemSelected(itemViewHolder: Presenter.ViewHolder?, item: Any?,
                                     rowViewHolder: RowPresenter.ViewHolder, row: Row) {
             if (item is Photoset) {
-                mBackgroundURL = item.backgroundImageUrl(getDisplaySize(ctx))
+                mBackgroundURL = item.backgroundImageUrl(getDisplaySize(requireContext()))
                 startBackgroundTimer()
             }
 
@@ -203,7 +206,7 @@ class MainFragment : BrowseFragment(), MainView, AnkoLogger {
         override fun run() {
             mHandler.post {
                 mBackgroundURL?.let {
-                    debug(mBackgroundURL)
+                    Timber.d(mBackgroundURL)
                     updateBackground(mBackgroundURL!!)
                 }
             }

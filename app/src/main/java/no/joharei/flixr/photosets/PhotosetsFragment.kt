@@ -4,25 +4,24 @@ package no.joharei.flixr.photosets
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.annotation.Nullable
-import android.support.v17.leanback.app.VerticalGridFragment
-import android.support.v17.leanback.widget.ArrayObjectAdapter
-import android.support.v17.leanback.widget.VerticalGridPresenter
+import androidx.annotation.Nullable
+import androidx.leanback.app.VerticalGridSupportFragment
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.VerticalGridPresenter
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
 import no.joharei.flixr.api.models.Photoset
-import org.jetbrains.anko.ctx
 
-class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
+class PhotosetsFragment : VerticalGridSupportFragment(), PhotosetsView {
     @InjectExtra
     @Nullable
     @JvmField
     internal var userId: String? = null
-    private val photosetsAdapter by lazy { ArrayObjectAdapter(CardPresenter(ctx)) }
+    private val photosetsAdapter by lazy { ArrayObjectAdapter(CardPresenter(context)) }
     private val photosetsPresenter = PhotosetsPresenter()
-    private val progressDialog by lazy { ProgressDialog(ctx) }
+    private val progressDialog by lazy { ProgressDialog(context) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +41,7 @@ class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
                         .photosetTitle(item.title)
                         .userId(userId)
                         .build()
-                activity.startActivity(intent)
+                startActivity(intent)
             }
         }
 
@@ -76,4 +75,7 @@ class PhotosetsFragment : VerticalGridFragment(), PhotosetsView {
     override fun hideProgress() {
         progressDialog.dismiss()
     }
+
+    override fun getContext(): Context = requireContext()
+
 }

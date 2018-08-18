@@ -1,14 +1,14 @@
 package no.joharei.flixr.decorations
 
 import android.graphics.Rect
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 class SpacesItemDecoration(space: Int) : RecyclerView.ItemDecoration() {
 
-    val halfSpace: Int = space / 2
+    private val halfSpace: Int = space / 2
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State?) {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
 
         if (parent.paddingLeft != halfSpace) {
             parent.setPadding(halfSpace, halfSpace, halfSpace, halfSpace)

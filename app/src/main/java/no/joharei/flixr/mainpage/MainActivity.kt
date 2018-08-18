@@ -1,12 +1,12 @@
 package no.joharei.flixr.mainpage
 
-import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 
-class MainActivity : Activity() {
+class MainActivity : FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.beginTransaction().add(android.R.id.content, MainFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, MainFragment()).commit()
     }
 }

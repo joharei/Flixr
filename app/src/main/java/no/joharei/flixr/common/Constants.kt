@@ -1,4 +1,4 @@
-package no.joharei.flixr.utils
+package no.joharei.flixr.common
 
 
 object Constants {

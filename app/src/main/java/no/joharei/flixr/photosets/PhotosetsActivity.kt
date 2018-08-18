@@ -4,15 +4,12 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.widget.RecyclerView
-import android.widget.TextView
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
+import kotlinx.android.synthetic.main.activity_photosets.*
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.adapters.PhotoAdapter
-import org.jetbrains.anko.*
 
 class PhotosetsActivity : Activity(), PhotosetsView {
 
@@ -22,27 +19,18 @@ class PhotosetsActivity : Activity(), PhotosetsView {
     internal lateinit var userName: String
     private val photosetsAdapter by lazy { PhotoAdapter(this) }
     private val photosetsPresenter = PhotosetsPresenter()
-    private val progressDialog by lazy { ProgressDialog(ctx) }
-    private lateinit var titleText: TextView
-    private lateinit var recyclerView: RecyclerView
+    private val progressDialog by lazy { ProgressDialog(this) }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Dart.inject(this)
 
+        setContentView(R.layout.activity_photosets)
+
         photosetsAdapter.userId = userId
 
-        verticalLayout {
-            horizontalPadding = dimen(R.dimen.activity_horizontal_margin)
-            titleText = textView {
-                TextViewCompat.setTextAppearance(this, R.style.TextStyleHeadline)
-                verticalPadding = dimen(R.dimen.activity_vertical_margin)
-                text = userName
-            }
-            recyclerView = include<RecyclerView>(R.layout.vertical_scrollbar_recyclerview) {
-                adapter = photosetsAdapter
-            }.lparams(matchParent, matchParent)
-        }
+        user_name.text = userName
+        photo_sets.adapter = photosetsAdapter
 
         photosetsPresenter.attachView(this)
         photosetsPresenter.fetchPhotosets(userId)
@@ -63,5 +51,5 @@ class PhotosetsActivity : Activity(), PhotosetsView {
 
     override fun hideProgress() = progressDialog.dismiss()
 
-    override fun getContext(): Context = ctx
+    override fun getContext(): Context = this
 }

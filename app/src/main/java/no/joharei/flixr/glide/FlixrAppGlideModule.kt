@@ -8,7 +8,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.common.adapters.PhotoItem
 import java.io.InputStream
 
 @GlideModule
@@ -21,7 +21,7 @@ class FlixrAppGlideModule : AppGlideModule() {
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         super.registerComponents(context, glide, registry)
-        registry.append(Photo::class.java, InputStream::class.java, FlickrModelLoader.Factory())
+        registry.append(PhotoItem::class.java, InputStream::class.java, FlickrModelLoader.Factory())
     }
 
     override fun isManifestParsingEnabled() = false

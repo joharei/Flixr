@@ -1,6 +1,6 @@
 package no.joharei.flixr.api.models
 
-import no.joharei.flixr.utils.getUrlOfSmallestPhotoToFillSize
+import no.joharei.flixr.common.getUrlOfSmallestPhotoToFillSize
 
 data class PrimaryPhotoExtras(
         val widthN: Int?,

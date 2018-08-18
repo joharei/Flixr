@@ -4,6 +4,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.*
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.common.adapters.PhotoItem
 import java.io.InputStream
 
 
@@ -14,25 +15,26 @@ import java.io.InputStream
  */
 class FlickrModelLoader(
         urlLoader: ModelLoader<GlideUrl, InputStream>,
-        modelCache: ModelCache<Photo, GlideUrl>
-) : BaseGlideUrlLoader<Photo>(urlLoader, modelCache) {
+        modelCache: ModelCache<PhotoItem, GlideUrl>
+) : BaseGlideUrlLoader<PhotoItem>(urlLoader, modelCache) {
 
-    override fun handles(model: Photo) = true
+    override fun handles(model: PhotoItem) = true
 
-    override fun getUrl(model: Photo, width: Int, height: Int, options: Options?): String {
-        return model.photoUrl(width, height)
-    }
+    override fun getUrl(model: PhotoItem, width: Int, height: Int, options: Options?) =
+            model.photoUrl(width, height)
 
-    override fun getAlternateUrls(model: Photo, width: Int, height: Int, options: Options?): List<String> {
-        return model.alternativeUrls(width, height)
-    }
+    override fun getAlternateUrls(model: PhotoItem, width: Int, height: Int, options: Options?) =
+            when (model) {
+                is Photo -> model.alternativeUrls(width, height)
+                else -> emptyList()
+            }
 
     /**
      * The default factory for [FlickrModelLoader]s.
      */
-    class Factory : ModelLoaderFactory<Photo, InputStream> {
+    class Factory : ModelLoaderFactory<PhotoItem, InputStream> {
 
-        private val modelCache = ModelCache<Photo, GlideUrl>(500)
+        private val modelCache = ModelCache<PhotoItem, GlideUrl>(500)
 
         override fun build(multiFactory: MultiModelLoaderFactory) =
                 FlickrModelLoader(
