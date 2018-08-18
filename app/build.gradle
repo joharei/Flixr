@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.0'
     defaultConfig {
         applicationId "no.joharei.flixr"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -37,12 +37,12 @@ android {
 
 ext {
     ankoVersion = '0.10.1'
-    supportLibVersion = '27.0.2'
+    supportLibVersion = '28.0.0-rc01'
     okhttp3Version = '3.8.0'
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
     dartVersion = '2.0.2'
-    paperParcelVersion = '2.0.4'
+    paperParcelVersion = '2.0.6'
     glideVersion = '4.0.0'
 }
 
@@ -59,15 +59,15 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
     implementation "com.android.support:leanback-v17:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     // Dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // RxJava
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
-    implementation "io.reactivex.rxjava2:rxjava:2.1.8"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.0"
 
     // networking
     implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
@@ -78,7 +78,7 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation 'se.akerfeldt:okhttp-signpost:1.1.0'
     implementation 'oauth.signpost:signpost-core:1.2.1.2'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
