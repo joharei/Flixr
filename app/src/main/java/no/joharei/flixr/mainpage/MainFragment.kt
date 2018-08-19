@@ -13,8 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.leanback.app.BackgroundManager
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+import kotlinx.coroutines.experimental.launch
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
@@ -136,26 +135,30 @@ class MainFragment : BrowseSupportFragment(), MainView {
     }
 
     private fun updateBackground(uri: String) {
-        val width = mMetrics.widthPixels
-        val height = mMetrics.heightPixels
-        GlideApp.with(requireContext())
-                .load(uri)
-                .centerCrop()
-                .override(width, height)
-                .error(mDefaultBackground)
-                .into(object : SimpleTarget<Drawable>() {
-                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                        mBackgroundManager.drawable = resource
-                    }
-
-                })
-        mBackgroundTimer?.cancel()
+        launch {
+            val width = mMetrics.widthPixels
+            val height = mMetrics.heightPixels
+            val futureDrawable = GlideApp.with(requireContext())
+                    .asDrawable()
+                    .load(uri)
+                    .centerCrop()
+                    .override(width, height)
+                    .error(mDefaultBackground)
+                    .submit()
+            try {
+                mBackgroundManager.drawable = futureDrawable.get()
+            } catch (e: Exception) {
+                // ignore
+            }
+            GlideApp.with(requireContext()).clear(futureDrawable)
+            mBackgroundTimer?.cancel()
+        }
     }
 
     private fun startBackgroundTimer() {
         mBackgroundTimer?.cancel()
         mBackgroundTimer = Timer()
-        mBackgroundTimer!!.schedule(UpdateBackgroundTask(), Constants.BACKGROUND_UPDATE_DELAY.toLong())
+        mBackgroundTimer?.schedule(UpdateBackgroundTask(), Constants.BACKGROUND_UPDATE_DELAY.toLong())
     }
 
     private inner class ItemViewClickedListener : OnItemViewClickedListener {

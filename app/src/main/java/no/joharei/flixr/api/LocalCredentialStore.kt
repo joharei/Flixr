@@ -14,8 +14,8 @@ class LocalCredentialStore @Inject constructor(context: Context) {
 
     val token: AuthToken
         get() = AuthToken(
-                prefs.getString(OAUTH_TOKEN, ""),
-                prefs.getString(OAUTH_TOKEN_SECRET, "")
+                prefs.getString(OAUTH_TOKEN, "") ?: "",
+                prefs.getString(OAUTH_TOKEN_SECRET, "") ?: ""
         )
 
     fun store(authToken: AuthToken) {

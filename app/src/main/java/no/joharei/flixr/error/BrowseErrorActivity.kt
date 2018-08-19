@@ -1,11 +1,11 @@
 package no.joharei.flixr.error
 
-import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 
-class BrowseErrorActivity : Activity() {
+class BrowseErrorActivity : FragmentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fragmentManager.beginTransaction().add(android.R.id.content, ErrorFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, ErrorFragment()).commit()
     }
 }

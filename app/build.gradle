@@ -40,6 +40,8 @@ androidExtensions {
     experimental = true
 }
 
+kotlin { experimental { coroutines 'enable' } }
+
 ext {
     supportLibVersion = '1.0.0-rc01'
     okhttp3Version = '3.8.0'
@@ -53,8 +55,9 @@ ext {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Kotlin & Anko
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.24.0'
 
     // Support libraries
     implementation "androidx.recyclerview:recyclerview:$supportLibVersion"
