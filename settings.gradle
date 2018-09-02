@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':aspectratiorecycler'
+project(':aspectratiorecycler').projectDir=new File('../AspectRatioRecycler/aspectratiorecycler')

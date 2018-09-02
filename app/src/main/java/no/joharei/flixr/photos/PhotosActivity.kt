@@ -10,6 +10,8 @@ import android.view.ViewTreeObserver
 import androidx.annotation.Nullable
 import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
+import com.github.awanishraj.aspectratiorecycler.ARAdapterWrapper
+import com.github.awanishraj.aspectratiorecycler.ARLayoutManager
 import kotlinx.android.synthetic.main.activity_photos.*
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
@@ -75,7 +77,7 @@ class PhotosActivity : Activity(), PhotosView {
         setContentView(R.layout.activity_photos)
 
         title_text.text = photosetTitle
-        photos_list.adapter = photoAdapter
+        photos_list.adapter = ARAdapterWrapper(photoAdapter)
 
         setExitSharedElementCallback(callback)
 
@@ -123,6 +125,9 @@ class PhotosActivity : Activity(), PhotosView {
 
     override fun showPhotos(photos: List<Photo>) {
         photoAdapter.swap(photos)
+        photos_list.layoutManager = ARLayoutManager(this, photoAdapter).apply {
+            setThresholds(6.0f, 8.0f)
+        }
         title_text.requestFocus()
     }
 

@@ -54,6 +54,7 @@ ext {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':aspectratiorecycler')
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -102,5 +103,4 @@ dependencies {
     implementation "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion"
     kapt "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
 
-    implementation 'com.github.500px:greedo-layout-for-android:v1.1.0'
 }

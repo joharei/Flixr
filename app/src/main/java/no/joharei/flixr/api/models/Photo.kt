@@ -44,7 +44,7 @@ data class Photo(
         val urlH: String?,
         val urlK: String?,
         val urlO: String?
-) : PhotoItem, Parcelable {
+) : PhotoItem(), Parcelable {
     override val thumbnailWidth: Int get() = widthN
     override val thumbnailHeight: Int get() = heightN
 

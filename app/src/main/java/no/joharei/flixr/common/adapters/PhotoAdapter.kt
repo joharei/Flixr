@@ -4,7 +4,6 @@ package no.joharei.flixr.common.adapters
 import android.app.Activity
 import android.app.ActivityOptions
 import android.graphics.drawable.Drawable
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.FixedPreloadSizeProvider
-import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator
+import com.github.awanishraj.aspectratiorecycler.ARAdapterInterface
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.photo_list_item.*
 import kotlinx.android.synthetic.main.photo_list_item.view.*
@@ -33,11 +32,9 @@ import java.util.*
 internal class PhotoAdapter(
         private val activity: Activity
 ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>(),
-        GreedoLayoutSizeCalculator.SizeCalculatorDelegate,
-        ListPreloader.PreloadModelProvider<PhotoItem> {
+        ListPreloader.PreloadModelProvider<PhotoItem>, ARAdapterInterface {
 
     private val photos = ArrayList<PhotoItem>()
-    lateinit var sizeCalculator: GreedoLayoutSizeCalculator
     var isPhotoActivityStarted = false
     var userId: String? = null
     private val thumbnailRequest = GlideApp.with(activity)
@@ -47,13 +44,6 @@ internal class PhotoAdapter(
         this.photos.clear()
         this.photos.addAll(photos)
         notifyDataSetChanged()
-    }
-
-    override fun aspectRatioForIndex(index: Int): Double {
-        if (index >= itemCount) {
-            return 1.0
-        }
-        return photos[index].thumbnailWidth.toDouble() / photos[index].thumbnailHeight
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -70,6 +60,10 @@ internal class PhotoAdapter(
     override fun getItemCount(): Int {
         return photos.size
     }
+
+    override fun getAdapter() = this
+
+    override fun getDataset() = photos
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         //            recyclerView.layoutManager = FocusingGreedoLayoutManager(this).apply {
@@ -124,18 +118,20 @@ internal class PhotoAdapter(
                 }
             }
 //            val size = sizeCalculator.sizeForChildAtPosition(position)
-            val size = Size(itemView.dip(150), itemView.dip(100))
+//            val size = Size(itemView.dip(150), itemView.dip(100))
             for (view in arrayOf(image, selection_view)) {
                 view.layoutParams.apply {
-                    width = size.width
-                    height = size.height
+                    width = photo.width
+                    height = photo.height
                 }
             }
-            thumbnail_text.layoutParams.width = size.width
+//            thumbnail_text.layoutParams.width = size.width
             thumbnailRequest
                     .load(photo)
                     .placeholder(R.color.black_opaque)
                     .error(R.drawable.ic_error)
+                    .override(photo.width, photo.height)
+                    .fitCenter()
                     .into(image)
             pos = position
         }
