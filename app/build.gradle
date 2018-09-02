@@ -43,7 +43,7 @@ androidExtensions {
 kotlin { experimental { coroutines 'enable' } }
 
 ext {
-    supportLibVersion = '1.0.0-rc01'
+    supportLibVersion = '1.0.0-rc02'
     okhttp3Version = '3.8.0'
     retrofitVersion = '2.3.0'
     daggerVersion = '2.10'
