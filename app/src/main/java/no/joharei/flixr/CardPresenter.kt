@@ -26,22 +26,24 @@ class CardPresenter(val context: Context) : Presenter() {
         sDefaultBackgroundColor = ContextCompat.getColor(context, R.color.default_background)
         sSelectedBackgroundColor = ContextCompat.getColor(context, R.color.selected_background)
 
-        val cardView = object : ImageCardView(ContextThemeWrapper(context, R.style.CustomImageCardTheme)) {
-            val textView = findViewById<TextView>(R.id.title_text)
+        val cardView =
+            object : ImageCardView(ContextThemeWrapper(context, R.style.CustomImageCardTheme)) {
+                val textView = findViewById<TextView>(R.id.title_text)
 
-            init {
-                isFocusable = true
-                isFocusableInTouchMode = true
-                setMainImageDimensions(WRAP_CONTENT, imageHeight)
-            }
+                init {
+                    isFocusable = true
+                    isFocusableInTouchMode = true
+                    setMainImageDimensions(WRAP_CONTENT, imageHeight)
+                }
 
-            override fun setSelected(selected: Boolean) {
-                updateCardBackgroundColor(this, selected)
-                textView.ellipsize = if (selected) TextUtils.TruncateAt.MARQUEE else TextUtils.TruncateAt.END
-                textView.setHorizontallyScrolling(selected)
-                super.setSelected(selected)
+                override fun setSelected(selected: Boolean) {
+                    updateCardBackgroundColor(this, selected)
+                    textView.ellipsize =
+                            if (selected) TextUtils.TruncateAt.MARQUEE else TextUtils.TruncateAt.END
+                    textView.setHorizontallyScrolling(selected)
+                    super.setSelected(selected)
+                }
             }
-        }
 
         updateCardBackgroundColor(cardView, false)
         return Presenter.ViewHolder(cardView)
@@ -62,18 +64,23 @@ class CardPresenter(val context: Context) : Presenter() {
             cardView.setMainImageDimensions(it, imageHeight)
         }
         GlideApp.with(context)
-                .load(when (item) {
-                    is Photoset -> item.photoUrl(Int.MAX_VALUE, context.dimen(R.dimen.photo_card_height))
+            .load(
+                when (item) {
+                    is Photoset -> item.photoUrl(
+                        Int.MAX_VALUE,
+                        context.dimen(R.dimen.photo_card_height)
+                    )
                     is Contact -> item.cardImageUrl
                     else -> null
-                })
-                .placeholder(R.color.black_opaque)
-                .error(R.drawable.ic_error)
-                .into(cardView.mainImageView)
+                }
+            )
+            .placeholder(R.color.black_opaque)
+            .error(R.drawable.ic_error)
+            .into(cardView.mainImageView)
     }
 
     private fun scaleWidth(originalHeight: Int, originalWidth: Int, newHeight: Int) =
-            newHeight * originalWidth / originalHeight
+        newHeight * originalWidth / originalHeight
 
     override fun onUnbindViewHolder(viewHolder: Presenter.ViewHolder) {
         val cardView = viewHolder.view as ImageCardView

@@ -2,6 +2,7 @@ package no.joharei.flixr.common
 
 import android.content.Context
 import android.graphics.Point
+import android.util.Size
 import android.view.WindowManager
 
 fun getDisplaySize(context: Context): Point {
@@ -11,6 +12,16 @@ fun getDisplaySize(context: Context): Point {
     display.getSize(size)
     return size
 }
+
+fun getSizeOfSmallestPhotoToFillSize(
+    fillWidth: Int,
+    fillHeight: Int,
+    photoWidths: List<Int>,
+    photoHeights: List<Int>
+): Size =
+    (photoWidths zip photoHeights)
+        .first { (width, height) -> width >= fillWidth || height >= fillHeight }
+        .let { Size(it.first, it.second) }
 
 fun getUrlOfSmallestPhotoToFillSize(fillWidth: Int, fillHeight: Int, photoWidths: List<Int>, photoHeights: List<Int>, photoUrls: List<String>): String =
         (photoWidths zip photoHeights)

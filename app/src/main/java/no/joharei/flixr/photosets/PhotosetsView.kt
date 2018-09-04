@@ -1,10 +1,9 @@
 package no.joharei.flixr.photosets
 
 import android.content.Context
-
 import no.joharei.flixr.api.models.Photoset
 
-internal interface PhotosetsView {
+interface PhotosetsView {
     fun getContext(): Context
 
     fun showProgress()

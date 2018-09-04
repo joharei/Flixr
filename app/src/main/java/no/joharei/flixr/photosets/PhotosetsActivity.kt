@@ -10,6 +10,8 @@ import kotlinx.android.synthetic.main.activity_photosets.*
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.adapters.PhotoAdapter
+import no.joharei.flixr.common.adapters.PhotoViewHolder
+import no.joharei.flixr.common.adapters.PhotoViewHolder.Companion.onPhotoClicked
 
 class PhotosetsActivity : Activity(), PhotosetsView {
 
@@ -17,7 +19,7 @@ class PhotosetsActivity : Activity(), PhotosetsView {
     internal lateinit var userId: String
     @InjectExtra
     internal lateinit var userName: String
-    private val photosetsAdapter by lazy { PhotoAdapter(this) }
+    private val photosetsAdapter by lazy { PhotoAdapter { onPhotoClicked(it) } }
     private val photosetsPresenter = PhotosetsPresenter()
     private val progressDialog by lazy { ProgressDialog(this) }
 
@@ -27,7 +29,7 @@ class PhotosetsActivity : Activity(), PhotosetsView {
 
         setContentView(R.layout.activity_photosets)
 
-        photosetsAdapter.userId = userId
+        PhotoViewHolder.userId = userId
 
         user_name.text = userName
         photo_sets.adapter = photosetsAdapter
@@ -41,7 +43,7 @@ class PhotosetsActivity : Activity(), PhotosetsView {
         photosetsPresenter.stop()
     }
 
-    override fun showPhotosets(photosets: List<Photoset>) = photosetsAdapter.swap(photosets)
+    override fun showPhotosets(photosets: List<Photoset>) = photosetsAdapter.submitList(photosets)
 
     override fun showProgress() {
         progressDialog.setTitle("Please wait")

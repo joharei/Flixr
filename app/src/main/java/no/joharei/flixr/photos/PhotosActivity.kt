@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.activity_photos.*
 import no.joharei.flixr.R
 import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.adapters.PhotoAdapter
+import no.joharei.flixr.common.adapters.PhotoViewHolder
+import no.joharei.flixr.common.adapters.PhotoViewHolder.Companion.onPhotoClicked
 
 
 class PhotosActivity : Activity(), PhotosView {
@@ -29,13 +31,16 @@ class PhotosActivity : Activity(), PhotosView {
     @JvmField
     internal var userId: String? = null
     private val photoAdapter by lazy {
-        PhotoAdapter(this)
+        PhotoAdapter { onPhotoClicked(it) }
     }
     private val photosPresenter: PhotosPresenter = PhotosPresenter()
     private var tmpReenterState: Bundle? = null
 
     private val callback = object : SharedElementCallback() {
-        override fun onMapSharedElements(names: MutableList<String>, sharedElements: MutableMap<String, View>) {
+        override fun onMapSharedElements(
+            names: MutableList<String>,
+            sharedElements: MutableMap<String, View>
+        ) {
             if (tmpReenterState != null) {
                 val startingPosition = tmpReenterState!!.getInt(EXTRA_STARTING_ALBUM_POSITION)
                 val currentPosition = tmpReenterState!!.getInt(EXTRA_CURRENT_ALBUM_POSITION)
@@ -88,7 +93,7 @@ class PhotosActivity : Activity(), PhotosView {
 
     override fun onResume() {
         super.onResume()
-        photoAdapter.isPhotoActivityStarted = false
+        PhotoViewHolder.isPhotoActivityStarted = false
     }
 
     override fun onActivityReenter(requestCode: Int, data: Intent?) {
@@ -124,7 +129,7 @@ class PhotosActivity : Activity(), PhotosView {
     override fun getContext(): Context = this
 
     override fun showPhotos(photos: List<Photo>) {
-        photoAdapter.swap(photos)
+        photoAdapter.submitList(photos)
         photos_list.layoutManager = ARLayoutManager(this, photoAdapter).apply {
             setThresholds(6.0f, 8.0f)
         }
