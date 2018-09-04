@@ -130,9 +130,7 @@ class PhotosActivity : Activity(), PhotosView {
 
     override fun showPhotos(photos: List<Photo>) {
         photoAdapter.submitList(photos)
-        photos_list.layoutManager = ARLayoutManager(this, photoAdapter).apply {
-            setThresholds(6.0f, 8.0f)
-        }
+        photos_list.layoutManager = ARLayoutManager(this, photoAdapter, 6.0f, 8.0f)
         title_text.requestFocus()
     }
 
