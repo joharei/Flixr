@@ -1,8 +1,10 @@
 package no.joharei.flixr.api.models
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class Title(
-        @SerializedName("_content")
-        val content: String
+    @Json(name = "_content")
+    val content: String
 )

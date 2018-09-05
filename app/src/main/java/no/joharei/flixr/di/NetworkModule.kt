@@ -1,7 +1,6 @@
 package no.joharei.flixr.di
 
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import no.joharei.flixr.api.AndroidFlickrApi
@@ -12,18 +11,17 @@ import no.joharei.flixr.common.ApiKeys
 import no.joharei.flixr.common.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.converter.gson.GsonConverterFactory
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer
 import se.akerfeldt.okhttp.signpost.SigningInterceptor
 import javax.inject.Singleton
 
 
-@Module
+@Module(includes = [JsonObjectMapperModule::class])
 class NetworkModule {
 
     @Provides
-    fun provideApiContainer(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): FlickrApiContainer {
-        return AndroidFlickrApi(okHttpClient, Constants.BASE_URL, gsonConverterFactory)
+    fun provideApiContainer(okHttpClient: OkHttpClient, moshi: Moshi): FlickrApiContainer {
+        return AndroidFlickrApi(okHttpClient, Constants.BASE_URL, moshi)
     }
 
     @Provides
@@ -38,15 +36,6 @@ class NetworkModule {
         clientBuilder.addInterceptor(httpLoggingInterceptor)
 
         return clientBuilder.build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideGsonConverterFactory(): GsonConverterFactory {
-        val gson = GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create()
-        return GsonConverterFactory.create(gson)
     }
 
     @Provides

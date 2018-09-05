@@ -1,12 +1,17 @@
 package no.joharei.flixr.mainpage.models
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
+data class ContactsResponse(val contacts: Contacts)
+
+@JsonClass(generateAdapter = true)
 data class Contacts(
-        val page: Int,
-        val pages: Int,
-        val perPage: Int,
-        val total: Int,
-        @SerializedName("contact")
-        val contacts: List<Contact>
+    val page: Int,
+    val pages: Int,
+    val per_page: Int,
+    val total: Int,
+    @Json(name = "contact")
+    val contacts: List<Contact>
 )

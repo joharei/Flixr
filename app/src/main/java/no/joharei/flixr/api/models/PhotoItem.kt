@@ -4,7 +4,8 @@ import android.graphics.Point
 import android.os.Parcelable
 import android.util.Size
 import com.github.awanishraj.aspectratiorecycler.DimInterface
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 import no.joharei.flixr.common.getSizeOfSmallestPhotoToFillSize
 import no.joharei.flixr.common.getUrlOfSmallestPhotoToFillSize
@@ -44,55 +45,53 @@ sealed class PhotoItem : DimInterface {
 }
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class Photo(
     val id: Long,
     val secret: String,
     val server: Int,
     val farm: Int,
     val title: String,
-    @SerializedName("isprimary")
-    val isPrimary: String,
-    @SerializedName("ispublic")
-    val isPublic: Int,
-    @SerializedName("isfriend")
-    val isFriend: Int,
-    @SerializedName("isfamily")
-    val isFamily: Int,
-    val widthN: Int,
-    val widthZ: Int?,
-    val widthC: Int?,
-    val widthB: Int?,
-    val widthH: Int?,
-    val widthK: Int?,
-    val widthO: Int?,
-    val heightN: Int,
-    val heightZ: Int?,
-    val heightC: Int?,
-    val heightB: Int?,
-    val heightH: Int?,
-    val heightK: Int?,
-    val heightO: Int?,
-    val urlN: String?,
-    val urlZ: String?,
-    val urlC: String?,
-    val urlB: String?,
-    val urlH: String?,
-    val urlK: String?,
-    val urlO: String?
+    val isprimary: String,
+    val ispublic: Int,
+    val isfriend: Int,
+    val isfamily: Int,
+    val width_n: Int,
+    val width_z: Int?,
+    val width_c: Int?,
+    val width_b: Int?,
+    val width_h: Int?,
+    val width_k: Int?,
+    val width_o: Int?,
+    val height_n: Int,
+    val height_z: Int?,
+    val height_c: Int?,
+    val height_b: Int?,
+    val height_h: Int?,
+    val height_k: Int?,
+    val height_o: Int?,
+    val url_n: String?,
+    val url_z: String?,
+    val url_c: String?,
+    val url_b: String?,
+    val url_h: String?,
+    val url_k: String?,
+    val url_o: String?
 ) : PhotoItem(), Parcelable {
-    override val thumbnailWidth get() = widthN
-    override val thumbnailHeight get() = heightN
+    override val thumbnailWidth get() = width_n
+    override val thumbnailHeight get() = height_n
     override val widths
-        get() = listOfNotNull(widthN, widthZ, widthC, widthB, widthH, widthK, widthO)
+        get() = listOfNotNull(width_n, width_z, width_c, width_b, width_h, width_k, width_o)
     override val heights
-        get() = listOfNotNull(heightN, heightZ, heightC, heightB, heightH, heightK, heightO)
-    override val urls get() = listOfNotNull(urlN, urlZ, urlC, urlB, urlH, urlK, urlO)
+        get() = listOfNotNull(height_n, height_z, height_c, height_b, height_h, height_k, height_o)
+    override val urls get() = listOfNotNull(url_n, url_z, url_c, url_b, url_h, url_k, url_o)
 
     fun alternativeUrls(width: Int, height: Int) =
         getUrlsOfLargerPhotos(width, height, widths, heights, urls)
 
 }
 
+@JsonClass(generateAdapter = true)
 data class Photoset(
     val id: Long,
     val primary: Long,
@@ -101,39 +100,39 @@ data class Photoset(
     val farm: Int,
     val photos: Int,
     val videos: String,
-    @SerializedName("title")
-    private val titleEnvelope: Title,
-    @SerializedName("description")
-    private val descriptionEnvelope: Description,
-    val needsInterstitial: Int,
-    val visibilityCanSeeSet: Int,
-    val countViews: String,
-    val countComments: String,
-    val canComment: Int,
-    val dateCreate: String,
-    val dateUpdate: String,
-    @SerializedName("primary_photo_extras")
+    @Json(name = "title")
+    val titleEnvelope: Title,
+    @Json(name = "description")
+    val descriptionEnvelope: Description,
+    val needs_interstitial: Int,
+    val visibility_can_see_set: Int,
+    val count_views: String,
+    val count_comments: String,
+    val can_comment: Int,
+    val date_create: String,
+    val date_update: String,
+    @Json(name = "primary_photo_extras")
     val extrasEnvelope: PrimaryPhotoExtras
 ) : PhotoItem() {
     val title: String get() = titleEnvelope.content
 
     val description: String get() = descriptionEnvelope.content
 
-    override val thumbnailHeight get() = extrasEnvelope.heightN ?: 0
+    override val thumbnailHeight get() = extrasEnvelope.height_n ?: 0
 
-    override val thumbnailWidth get() = extrasEnvelope.widthN ?: 0
+    override val thumbnailWidth get() = extrasEnvelope.width_n ?: 0
 
     override val widths
         get() = with(extrasEnvelope) {
-            listOfNotNull(widthN, widthZ, widthC, widthB, widthH, widthK, widthO)
+            listOfNotNull(width_n, width_z, width_c, width_b, width_h, width_k, width_o)
         }
     override val heights
         get() = with(extrasEnvelope) {
-            listOfNotNull(heightN, heightZ, heightC, heightB, heightH, heightK, heightO)
+            listOfNotNull(height_n, height_z, height_c, height_b, height_h, height_k, height_o)
         }
     override val urls
         get() = with(extrasEnvelope) {
-            listOfNotNull(urlN, urlZ, urlC, urlB, urlH, urlK, urlO)
+            listOfNotNull(url_n, url_z, url_c, url_b, url_h, url_k, url_o)
         }
 
     fun backgroundImageUrl(displaySize: Point) =
