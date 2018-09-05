@@ -1,4 +1,4 @@
-package no.joharei.flixr.modules
+package no.joharei.flixr.di
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 
 @Module
-class MainModule {
+class NetworkModule {
 
     @Provides
     fun provideApiContainer(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): FlickrApiContainer {

@@ -1,16 +1,17 @@
 package no.joharei.flixr
 
-import android.app.Application
+import dagger.android.AndroidInjector
+import dagger.android.support.DaggerApplication
+import no.joharei.flixr.di.DaggerMainComponent
+import no.joharei.flixr.di.MainComponent
 import no.joharei.flixr.logging.AnalyticsCrashReportingTree
-import no.joharei.flixr.modules.AndroidModule
 import timber.log.Timber
 
-class MainApplication : Application() {
+class MainApplication : DaggerApplication() {
 
 
     override fun onCreate() {
         super.onCreate()
-        buildComponentAndInject()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         } else {
@@ -18,13 +19,16 @@ class MainApplication : Application() {
         }
     }
 
-    fun buildComponentAndInject() {
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         component = DaggerMainComponent.builder()
-                .androidModule(AndroidModule(this))
-                .build()
+            .application(this)
+            .build()
+        component.inject(this)
+        return component
     }
 
     companion object {
         lateinit var component: MainComponent
+            private set
     }
 }

@@ -1,12 +1,13 @@
 package no.joharei.flixr.mainpage
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import no.joharei.flixr.di.DaggerFragmentActivity
 
-class MainActivity : FragmentActivity() {
+class MainActivity : DaggerFragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.beginTransaction().replace(android.R.id.content, MainFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, MainFragment())
+            .commit()
     }
 }
