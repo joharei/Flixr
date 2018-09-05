@@ -50,6 +50,7 @@ ext {
     dartVersion = '2.0.2'
     paperParcelVersion = '2.0.6'
     glideVersion = '4.8.0'
+    kotlinxVersion = '0.25.3'
 }
 
 dependencies {
@@ -58,7 +59,8 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.25.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxVersion"
 
     // Support libraries
     implementation "androidx.recyclerview:recyclerview:$supportLibVersion"
