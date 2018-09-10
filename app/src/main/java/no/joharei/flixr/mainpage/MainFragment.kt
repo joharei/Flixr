@@ -7,12 +7,19 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.leanback.app.BackgroundManager
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.coroutines.experimental.launch
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
@@ -27,8 +34,9 @@ import no.joharei.flixr.mainpage.models.Contact
 import no.joharei.flixr.preferences.CommonPreferences
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
-class MainFragment : BrowseSupportFragment(), MainView {
+class MainFragment : BrowseSupportFragment(), HasSupportFragmentInjector {
 
     private val mHandler = Handler()
     private val mRowsAdapter = ArrayObjectAdapter(ListRowPresenter())
@@ -43,14 +51,25 @@ class MainFragment : BrowseSupportFragment(), MainView {
     private val mBackgroundManager: BackgroundManager by lazy {
         BackgroundManager.getInstance(activity)
     }
-    private val mainPresenter = MainPresenter()
+    private lateinit var mainViewModel: MainViewModel
     private val photosetAdapter by lazy { ArrayObjectAdapter(CardPresenter(requireContext())) }
     private val contactsAdapter by lazy { ArrayObjectAdapter(CardPresenter(requireContext())) }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    @Inject
+    lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
 
-        mainPresenter.attachView(this)
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    override fun supportFragmentInjector() = childFragmentInjector
+
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         prepareBackgroundManager()
 
@@ -69,9 +88,13 @@ class MainFragment : BrowseSupportFragment(), MainView {
         setupEventListeners()
     }
 
+    private fun initViewModel() {
+        mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        mainPresenter.stop()
+        mainViewModel.stop()
     }
 
     override fun onDestroy() {
@@ -83,7 +106,7 @@ class MainFragment : BrowseSupportFragment(), MainView {
     private fun loadPhotosets() {
         val photosetHeader = HeaderItem("Photosets")
         mRowsAdapter.add(ListRow(photosetHeader, photosetAdapter))
-        mainPresenter.fetchMyPhotosets()
+        mainViewModel.fetchMyPhotosets()
     }
 
     override fun showMyPhotosets(photosets: List<Photoset>) {
@@ -93,7 +116,7 @@ class MainFragment : BrowseSupportFragment(), MainView {
     private fun loadContacts() {
         val followingHeader = HeaderItem("Following")
         mRowsAdapter.add(ListRow(followingHeader, contactsAdapter))
-        mainPresenter.fetchMyContacts()
+        mainViewModel.fetchMyContacts()
     }
 
     override fun showMyContacts(contacts: List<Contact>) {

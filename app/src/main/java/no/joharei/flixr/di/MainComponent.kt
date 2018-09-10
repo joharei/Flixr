@@ -8,7 +8,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import dagger.android.support.DaggerApplication
 import no.joharei.flixr.MainApplication
 import no.joharei.flixr.login.LoginPresenter
-import no.joharei.flixr.mainpage.MainPresenter
+import no.joharei.flixr.mainpage.MainViewModel
 import no.joharei.flixr.photos.PhotosPresenter
 import no.joharei.flixr.photosets.PhotosetsPresenter
 import javax.inject.Singleton
@@ -28,7 +28,7 @@ interface MainComponent : AndroidInjector<DaggerApplication> {
 
     fun inject(loginPresenter: LoginPresenter)
 
-    fun inject(mainPresenter: MainPresenter)
+    fun inject(mainViewModel: MainViewModel)
 
     fun inject(photosetsPresenter: PhotosetsPresenter)
 

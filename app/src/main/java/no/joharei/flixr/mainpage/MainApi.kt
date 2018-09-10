@@ -1,5 +1,6 @@
 package no.joharei.flixr.mainpage
 
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import no.joharei.flixr.api.FlickrApiContainer
 import no.joharei.flixr.api.models.Photosets
@@ -11,13 +12,11 @@ class MainApi
 @Inject
 constructor(private val flickrApiContainer: FlickrApiContainer, private val observableCache: ObservableCache) {
 
-    internal fun fetchMyPhotosets(): Observable<Photosets> {
-        return observableCache.getCachedObservable(flickrApiContainer.getPhotosets(null), Photosets::class.java, "main", true, true)
-    }
+    fun fetchMyPhotosets(): Flowable<Photosets> = flickrApiContainer.getPhotosets(null)
 
-    internal fun fetchContacts(): Observable<Contacts> {
+    fun fetchContacts(): Observable<Contacts> {
         return observableCache.getCachedObservable(flickrApiContainer.getContacts(), Contacts::class.java, true, true)
     }
 
-    internal fun clearCache() = observableCache.clearCache()
+    fun clearCache() = observableCache.clearCache()
 }

@@ -1,32 +1,31 @@
 package no.joharei.flixr.mainpage
 
+import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
-import no.joharei.flixr.MainApplication
+import no.joharei.flixr.common.extensions.toLiveData
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainPresenter {
+class MainViewModel @Inject constructor() : ViewModel() {
+
     @Inject
     lateinit var mainApi: MainApi
-    lateinit var view: MainView
     private val compositeSubscription = CompositeDisposable()
-
-    fun attachView(view: MainView) {
-        this.view = view
-        MainApplication.component.inject(this)
-    }
 
     fun fetchMyPhotosets() {
         val photosetsSub = mainApi.fetchMyPhotosets()
                 .applyDefaultSchedulers()
-                .subscribe(
-                        { photosets -> view.showMyPhotosets(photosets.photosets) },
-                        { throwable ->
-                            Timber.e(throwable, "Failed fetching my photosets")
-                            mainApi.clearCache()
-                            // TODO
-                        })
+            .toLiveData {
+                Timber.e(it, "Failed fetching my photosets")
+            }
+//                .subscribe(
+//                        { photosets -> view.showMyPhotosets(photosets.photosets) },
+//                        { throwable ->
+//                            Timber.e(throwable, "Failed fetching my photosets")
+//                            mainApi.clearCache()
+//                            // TODO
+//                        })
         compositeSubscription.add(photosetsSub)
     }
 

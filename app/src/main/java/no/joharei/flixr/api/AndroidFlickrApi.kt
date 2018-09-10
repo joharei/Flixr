@@ -1,6 +1,7 @@
 package no.joharei.flixr.api
 
 import com.squareup.moshi.Moshi
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import no.joharei.flixr.api.models.Photos
 import no.joharei.flixr.api.models.Photosets
@@ -19,29 +20,21 @@ class AndroidFlickrApi(okHttpClient: OkHttpClient, url: String, moshi: Moshi) : 
         okHttpClient: OkHttpClient,
         url: String,
         moshi: Moshi
-    ): FlickrApiDefinition {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(url)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(okHttpClient)
-            .build()
-        return retrofit.create(FlickrApiDefinition::class.java)
-    }
+    ): FlickrApiDefinition = Retrofit.Builder()
+        .baseUrl(url)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .client(okHttpClient)
+        .build()
+        .create(FlickrApiDefinition::class.java)
 
-    override fun getUserDetails(): Observable<User> {
-        return api.getUserDetails().map { it.user }
-    }
+    override fun getUserDetails(): Observable<User> = api.getUserDetails().map { it.user }
 
-    override fun getPhotosets(userId: String?): Observable<Photosets> {
-        return api.getPhotosets(userId).map { it.photosets }
-    }
+    override fun getPhotosets(userId: String?): Flowable<Photosets> =
+        api.getPhotosets(userId).map { it.photosets }
 
-    override fun getPhotos(photosetId: Long, userId: String?): Observable<Photos> {
-        return api.getPhotos(photosetId, userId).map { it.photoset }
-    }
+    override fun getPhotos(photosetId: Long, userId: String?): Observable<Photos> =
+        api.getPhotos(photosetId, userId).map { it.photoset }
 
-    override fun getContacts(): Observable<Contacts> {
-        return api.getContacts().map { it.contacts }
-    }
+    override fun getContacts(): Observable<Contacts> = api.getContacts().map { it.contacts }
 }
