@@ -1,8 +1,8 @@
 package no.joharei.flixr.photos
 
 import io.reactivex.Observable
-import no.joharei.flixr.api.FlickrApiContainer
-import no.joharei.flixr.api.models.Photos
+import no.joharei.flixr.network.FlickrApiContainer
+import no.joharei.flixr.network.models.Photos
 import no.joharei.flixr.tools.ObservableCache
 import javax.inject.Inject
 

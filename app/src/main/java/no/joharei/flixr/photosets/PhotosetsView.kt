@@ -1,7 +1,7 @@
 package no.joharei.flixr.photosets
 
 import android.content.Context
-import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.network.models.Photoset
 
 interface PhotosetsView {
     fun getContext(): Context

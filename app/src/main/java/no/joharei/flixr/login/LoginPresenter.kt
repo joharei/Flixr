@@ -4,9 +4,9 @@ import android.net.Uri
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
-import no.joharei.flixr.api.LocalCredentialStore
-import no.joharei.flixr.api.models.AuthToken
 import no.joharei.flixr.common.Constants
+import no.joharei.flixr.network.LocalCredentialStore
+import no.joharei.flixr.network.models.AuthToken
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import oauth.signpost.OAuth

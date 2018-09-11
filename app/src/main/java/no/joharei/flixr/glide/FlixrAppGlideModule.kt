@@ -8,7 +8,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import no.joharei.flixr.api.models.PhotoItem
+import no.joharei.flixr.network.models.PhotoItem
 import java.io.InputStream
 
 @GlideModule

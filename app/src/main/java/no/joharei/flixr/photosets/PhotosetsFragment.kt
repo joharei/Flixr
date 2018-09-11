@@ -12,7 +12,7 @@ import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
-import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.network.models.Photoset
 
 class PhotosetsFragment : VerticalGridSupportFragment(), PhotosetsView {
     @InjectExtra

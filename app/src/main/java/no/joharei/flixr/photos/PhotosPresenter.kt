@@ -2,7 +2,7 @@ package no.joharei.flixr.photos
 
 import io.reactivex.disposables.CompositeDisposable
 import no.joharei.flixr.MainApplication
-import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.network.models.Photo
 import no.joharei.flixr.preferences.CommonPreferences
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import timber.log.Timber

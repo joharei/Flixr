@@ -3,12 +3,12 @@ package no.joharei.flixr.di
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import no.joharei.flixr.api.AndroidFlickrApi
-import no.joharei.flixr.api.FlickrApiContainer
-import no.joharei.flixr.api.FlickrInterceptor
-import no.joharei.flixr.api.LocalCredentialStore
 import no.joharei.flixr.common.ApiKeys
 import no.joharei.flixr.common.Constants
+import no.joharei.flixr.network.AndroidFlickrApi
+import no.joharei.flixr.network.FlickrApiContainer
+import no.joharei.flixr.network.FlickrInterceptor
+import no.joharei.flixr.network.LocalCredentialStore
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import se.akerfeldt.okhttp.signpost.OkHttpOAuthConsumer

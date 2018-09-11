@@ -1,4 +1,4 @@
-package no.joharei.flixr.api
+package no.joharei.flixr.network
 
 import okhttp3.Interceptor
 import okhttp3.Response

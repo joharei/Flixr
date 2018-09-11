@@ -3,8 +3,8 @@ package no.joharei.flixr.glide
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.*
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
-import no.joharei.flixr.api.models.Photo
-import no.joharei.flixr.api.models.PhotoItem
+import no.joharei.flixr.network.models.Photo
+import no.joharei.flixr.network.models.PhotoItem
 import java.io.InputStream
 
 

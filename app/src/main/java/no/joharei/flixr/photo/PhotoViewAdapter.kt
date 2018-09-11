@@ -13,9 +13,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.photo_fullscreen_item.view.*
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.getDisplaySize
 import no.joharei.flixr.glide.GlideApp
+import no.joharei.flixr.network.models.Photo
 import java.util.*
 
 

@@ -2,7 +2,7 @@ package no.joharei.flixr.photos
 
 import android.content.Context
 
-import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.network.models.Photo
 
 internal interface PhotosView {
     fun getContext(): Context

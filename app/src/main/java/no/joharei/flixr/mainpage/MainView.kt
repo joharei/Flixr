@@ -1,9 +1,8 @@
 package no.joharei.flixr.mainpage
 
 import android.content.Context
-import no.joharei.flixr.api.models.Photoset
-
 import no.joharei.flixr.mainpage.models.Contact
+import no.joharei.flixr.network.models.Photoset
 
 interface MainView {
     fun getViewContext(): Context

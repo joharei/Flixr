@@ -1,4 +1,4 @@
-package no.joharei.flixr.api.models
+package no.joharei.flixr.network.models
 
 import android.graphics.Point
 import android.os.Parcelable

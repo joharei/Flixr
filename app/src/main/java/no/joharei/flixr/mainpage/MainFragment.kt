@@ -15,8 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BackgroundManager
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.*
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.HasSupportFragmentInjector
@@ -24,13 +24,15 @@ import kotlinx.coroutines.experimental.launch
 import no.joharei.flixr.CardPresenter
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
-import no.joharei.flixr.api.LocalCredentialStore
-import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.Constants
+import no.joharei.flixr.common.extensions.viewModelProvider
 import no.joharei.flixr.common.getDisplaySize
 import no.joharei.flixr.error.BrowseErrorActivity
 import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
+import no.joharei.flixr.network.LocalCredentialStore
+import no.joharei.flixr.network.framework.Result
+import no.joharei.flixr.network.models.Photoset
 import no.joharei.flixr.preferences.CommonPreferences
 import timber.log.Timber
 import java.util.*
@@ -71,6 +73,8 @@ class MainFragment : BrowseSupportFragment(), HasSupportFragmentInjector {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        initViewModel()
+
         prepareBackgroundManager()
 
         setupUIElements()
@@ -86,10 +90,12 @@ class MainFragment : BrowseSupportFragment(), HasSupportFragmentInjector {
         }
 
         setupEventListeners()
+
+        initObservers()
     }
 
     private fun initViewModel() {
-        mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        mainViewModel = viewModelProvider(viewModelFactory)
     }
 
     override fun onDestroyView() {
@@ -103,14 +109,18 @@ class MainFragment : BrowseSupportFragment(), HasSupportFragmentInjector {
         mBackgroundTimer?.cancel()
     }
 
+    private fun initObservers() {
+        mainViewModel.fetchMyPhotosets().observe(this, Observer {
+            when (it) {
+                is Result.Success -> photosetAdapter.addAll(0, it.data.photosets)
+            }
+        })
+    }
+
     private fun loadPhotosets() {
         val photosetHeader = HeaderItem("Photosets")
         mRowsAdapter.add(ListRow(photosetHeader, photosetAdapter))
         mainViewModel.fetchMyPhotosets()
-    }
-
-    override fun showMyPhotosets(photosets: List<Photoset>) {
-        photosetAdapter.addAll(0, photosets)
     }
 
     private fun loadContacts() {
@@ -119,11 +129,9 @@ class MainFragment : BrowseSupportFragment(), HasSupportFragmentInjector {
         mainViewModel.fetchMyContacts()
     }
 
-    override fun showMyContacts(contacts: List<Contact>) {
-        contactsAdapter.addAll(0, contacts)
-    }
-
-    override fun getViewContext(): Context = super.requireContext()
+//    override fun showMyContacts(contacts: List<Contact>) {
+//        contactsAdapter.addAll(0, contacts)
+//    }
 
     private fun prepareBackgroundManager() {
         activity?.let {

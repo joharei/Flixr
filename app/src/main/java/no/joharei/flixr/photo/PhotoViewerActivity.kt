@@ -10,7 +10,7 @@ import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import kotlinx.android.synthetic.main.activity_photo_viewer.*
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photo
+import no.joharei.flixr.network.models.Photo
 import no.joharei.flixr.photos.PhotosActivity
 import java.util.*
 

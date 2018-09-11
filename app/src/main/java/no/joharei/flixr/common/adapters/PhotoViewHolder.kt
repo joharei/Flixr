@@ -9,10 +9,10 @@ import kotlinx.android.synthetic.main.photo_list_item.*
 import kotlinx.android.synthetic.main.thumbnail_text.*
 import no.joharei.flixr.Henson
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photo
-import no.joharei.flixr.api.models.PhotoItem
-import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.glide.GlideApp
+import no.joharei.flixr.network.models.Photo
+import no.joharei.flixr.network.models.PhotoItem
+import no.joharei.flixr.network.models.Photoset
 
 class PhotoViewHolder(
     override val containerView: View,

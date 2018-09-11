@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.github.awanishraj.aspectratiorecycler.ARAdapterInterface
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photo
-import no.joharei.flixr.api.models.PhotoItem
-import no.joharei.flixr.api.models.Photoset
+import no.joharei.flixr.network.models.Photo
+import no.joharei.flixr.network.models.PhotoItem
+import no.joharei.flixr.network.models.Photoset
 
 class PhotoAdapter(
     private val onClickListener: (PhotoItem) -> Unit

@@ -1,8 +1,8 @@
-package no.joharei.flixr.api
+package no.joharei.flixr.network
 
 import android.content.Context
 import android.content.SharedPreferences
-import no.joharei.flixr.api.models.AuthToken
+import no.joharei.flixr.network.models.AuthToken
 import oauth.signpost.OAuth.OAUTH_TOKEN
 import oauth.signpost.OAuth.OAUTH_TOKEN_SECRET
 import javax.inject.Inject

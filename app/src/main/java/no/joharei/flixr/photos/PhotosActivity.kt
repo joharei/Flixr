@@ -14,10 +14,10 @@ import com.github.awanishraj.aspectratiorecycler.ARAdapterWrapper
 import com.github.awanishraj.aspectratiorecycler.ARLayoutManager
 import kotlinx.android.synthetic.main.activity_photos.*
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photo
 import no.joharei.flixr.common.adapters.PhotoAdapter
 import no.joharei.flixr.common.adapters.PhotoViewHolder
 import no.joharei.flixr.common.adapters.PhotoViewHolder.Companion.onPhotoClicked
+import no.joharei.flixr.network.models.Photo
 
 
 class PhotosActivity : Activity(), PhotosView {

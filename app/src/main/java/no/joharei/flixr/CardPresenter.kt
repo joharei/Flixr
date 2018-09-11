@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
-import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.extensions.dimen
 import no.joharei.flixr.glide.GlideApp
 import no.joharei.flixr.mainpage.models.Contact
+import no.joharei.flixr.network.models.Photoset
 
 class CardPresenter(val context: Context) : Presenter() {
     private var sSelectedBackgroundColor: Int = 0

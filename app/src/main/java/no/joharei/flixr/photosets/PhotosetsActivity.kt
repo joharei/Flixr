@@ -8,10 +8,10 @@ import com.f2prateek.dart.Dart
 import com.f2prateek.dart.InjectExtra
 import kotlinx.android.synthetic.main.activity_photosets.*
 import no.joharei.flixr.R
-import no.joharei.flixr.api.models.Photoset
 import no.joharei.flixr.common.adapters.PhotoAdapter
 import no.joharei.flixr.common.adapters.PhotoViewHolder
 import no.joharei.flixr.common.adapters.PhotoViewHolder.Companion.onPhotoClicked
+import no.joharei.flixr.network.models.Photoset
 
 class PhotosetsActivity : Activity(), PhotosetsView {
 

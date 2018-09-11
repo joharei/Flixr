@@ -1,8 +1,10 @@
 package no.joharei.flixr.mainpage
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
-import no.joharei.flixr.common.extensions.toLiveData
+import no.joharei.flixr.network.framework.Result
+import no.joharei.flixr.network.models.Photosets
 import no.joharei.flixr.tools.applyDefaultSchedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -10,33 +12,29 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
 
     @Inject
-    lateinit var mainApi: MainApi
+    lateinit var mainRepository: MainRepository
     private val compositeSubscription = CompositeDisposable()
 
-    fun fetchMyPhotosets() {
-        val photosetsSub = mainApi.fetchMyPhotosets()
-                .applyDefaultSchedulers()
-            .toLiveData {
-                Timber.e(it, "Failed fetching my photosets")
-            }
+    fun fetchMyPhotosets(): LiveData<Result<Photosets>> = mainRepository.fetchMyPhotosets()
+//            .toLiveData<Photosets> {
+//                Timber.e(it, "Failed fetching my photosets")
+//            }
 //                .subscribe(
 //                        { photosets -> view.showMyPhotosets(photosets.photosets) },
 //                        { throwable ->
 //                            Timber.e(throwable, "Failed fetching my photosets")
-//                            mainApi.clearCache()
+//                            mainRepository.clearCache()
 //                            // TODO
-//                        })
-        compositeSubscription.add(photosetsSub)
-    }
+//                        }
 
     fun fetchMyContacts() {
-        val contactsSub = mainApi.fetchContacts()
+        val contactsSub = mainRepository.fetchContacts()
                 .applyDefaultSchedulers()
                 .subscribe(
-                        { contacts -> view.showMyContacts(contacts.contacts) },
+                    { contacts -> /*view.showMyContacts(contacts.contacts)*/ },
                         { throwable ->
                             Timber.e(throwable, "Failed fetching my contacts")
-                            mainApi.clearCache()
+                            mainRepository.clearCache()
                             // TODO
                         })
         compositeSubscription.add(contactsSub)
