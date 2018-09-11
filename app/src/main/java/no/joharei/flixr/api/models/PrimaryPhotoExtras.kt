@@ -1,5 +1,8 @@
 package no.joharei.flixr.api.models
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class PrimaryPhotoExtras(
     val width_n: Int?,
     val width_z: Int?,
